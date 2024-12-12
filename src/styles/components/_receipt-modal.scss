@@ -1,0 +1,16 @@
+.receipt-modal {
+  h2.title {
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+  .receipt-info-item {
+    display: flex;
+    gap: 5px;
+    line-height: 180%;
+    &.total {
+      margin: 20px 0 10px;
+      justify-content: space-between;
+    }
+  }
+}

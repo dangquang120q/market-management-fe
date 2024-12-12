@@ -1,0 +1,59 @@
+.invoice-modal {
+  .ant-modal-content {
+    padding: 32px 20px !important;
+  }
+  .title {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px dashed black;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    img {
+      height: 60px;
+      margin: auto;
+    }
+  }
+  h2 {
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .invoice-table {
+    .ant-table-thead > tr > th {
+      padding: 10px 8px;
+    }
+    .ant-table-tbody > tr > td {
+      padding: 8px;
+    }
+    .ant-table-tbody > tr > td {
+      border-bottom: none;
+    }
+  }
+  .product-table {
+    border-bottom: 1px dashed black;
+    padding-bottom: 10px;
+  }
+  .invoice-total {
+    padding: 10px 0;
+    border-bottom: 1px dashed black;
+    margin-bottom: 10px;
+    &-item {
+      display: flex;
+      justify-content: space-between;
+      b {
+        text-transform: uppercase;
+      }
+      p {
+        font-weight: 700;
+      }
+    }
+  }
+  .invoice-member-item {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.invoice-info-item {
+  display: flex;
+  gap: 5px;
+}

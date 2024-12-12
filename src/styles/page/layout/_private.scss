@@ -1,0 +1,40 @@
+$sider-width: 230px;
+
+.private-layout {
+  position: relative;
+  .demo-logo-vertical {
+    height: 40px;
+    margin: 10px 20px;
+    border-radius: 8px;
+    color: #fff;
+    text-align: center;
+  }
+  .ant-menu-root {
+    margin-top: 30px;
+  }
+  &-content {
+    min-height: calc(100vh - 64px - 24px);
+  }
+  aside.ant-layout-sider {
+    min-width: $sider-width !important;
+    max-width: unset !important;
+  }
+  .ant-layout {
+    margin-left: $sider-width !important;
+  }
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    .logout {
+      padding: 16px 20px;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+      background-color: #1677ff;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+.invoice-create {
+  h2 {
+    margin-bottom: 15px;
+  }
+  .search-product {
+    margin-bottom: 20px;
+    .ant-input-group-wrapper {
+      max-width: 500px;
+    }
+    .ant-input-search .ant-input-search-button {
+      height: 39px;
+    }
+    .product-import {
+      margin-top: 30px;
+      border: 1px dashed $color_gray_7;
+      padding: 15px;
+      border-radius: 16px;
+    }
+  }
+  .total-wrapper {
+    line-height: 150%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .ant-divider-horizontal {
+    margin: 14px 0;
+  }
+  .total-price {
+    color: #ff4d4f;
+    font-size: 32px;
+    margin: 15px 0 5px;
+  }
+}
+
+.floorplant {
+  display: flex;
+  justify-content: center;
+  img {
+    margin: 20px;
+    width: 500px;
+  }
+}
