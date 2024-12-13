@@ -14,7 +14,7 @@ const PriveLayout: FC = () => {
     const userLocal = localStorage.getItem(USER_DETAIL) || "{}";
     const user = JSON.parse(userLocal).state;
 
-    if (!user.id) navigate(ROUTE_URL.LOGIN);
+    if (!user?.id) navigate(ROUTE_URL.LOGIN);
     else {
       navigate(location.pathname || ROUTE_URL.PRODUCT);
     }
