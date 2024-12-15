@@ -88,14 +88,14 @@ const PriveLayout: FC = () => {
             selectedKeys={location.pathname ? [location.pathname] : []}
           />
         </Header>
-        <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
+        <Content style={{ margin: "24px", overflow: "initial" }}>
           <div
             className="private-layout-content"
-            style={{
-              padding: 24,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
+            // style={{
+            //   padding: 24,
+            //   background: colorBgContainer,
+            //   borderRadius: borderRadiusLG,
+            // }}
           >
             <Outlet />
           </div>

@@ -2,11 +2,12 @@ import {
   BarsOutlined,
   DeleteOutlined,
   EditOutlined,
-  RedoOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Space, TableProps } from "antd";
+import { Button, Space, TableProps, Tooltip } from "antd";
+import { CommonSearch, CommonTable } from "components/common";
 import ProductModal from "components/Modal/Product";
-import TableSearch from "components/TableSearch";
+import { APP_NAME } from "constant";
 import { initProduct } from "constant/initial";
 import { ICategory, IProduct } from "constant/interface";
 import { ModalType, ModalTypeType } from "constant/type";
@@ -22,7 +23,9 @@ const Product: FC = () => {
     item: initProduct,
   });
   const [products, setProducts] = useState<Array<IProduct>>([]);
+  const [originalProducts, setOriginalProducts] = useState<Array<IProduct>>([]);
   const [categories, setCategories] = useState<Array<ICategory>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const handleOpenModal = (status: ModalTypeType, item: IProduct) => {
     setOpen({
@@ -35,8 +38,11 @@ const Product: FC = () => {
     await getListProduct();
   };
   const getListProduct = async () => {
+    setIsLoading(true);
     const res = await productService.getListProduct();
+    setOriginalProducts(res);
     setProducts(res);
+    setIsLoading(false);
   };
   const columns: TableProps<IProduct>["columns"] = [
     {
@@ -96,40 +102,50 @@ const Product: FC = () => {
       render: (value: string | number, rec: IProduct) => {
         return (
           <Space>
-            <Button
-              type="link"
-              size="small"
-              onClick={() => {
-                navigate(ROUTE_URL.PRODUCT + `/shipment/${value}`);
-              }}
-            >
-              <BarsOutlined />
-            </Button>
-            <Button
-              type="link"
-              size="small"
-              onClick={() => {
-                handleOpenModal("edit", rec);
-              }}
-            >
-              <EditOutlined />
-            </Button>
-            <Button
-              type="link"
-              size="small"
-              danger
-              onClick={() => {
-                handleDeleteProduct(value);
-              }}
-            >
-              <DeleteOutlined />
-            </Button>
+            <Tooltip placement="top" title="Lô hàng">
+              <Button
+                type="link"
+                size="small"
+                onClick={() => {
+                  navigate(ROUTE_URL.PRODUCT + `/shipment/${value}`);
+                }}
+              >
+                <BarsOutlined />
+              </Button>
+            </Tooltip>
+
+            <Tooltip placement="top" title="Sửa">
+              <Button
+                type="link"
+                size="small"
+                onClick={() => {
+                  handleOpenModal("edit", rec);
+                }}
+              >
+                <EditOutlined />
+              </Button>
+            </Tooltip>
+
+            <Tooltip placement="top" title="Xóa">
+              <Button
+                type="link"
+                size="small"
+                danger
+                onClick={() => {
+                  handleDeleteProduct(value);
+                }}
+              >
+                <DeleteOutlined />
+              </Button>
+            </Tooltip>
           </Space>
         );
       },
     },
   ];
+
   useEffect(() => {
+    document.title = `Quản lý mặt hàng - ${APP_NAME}`;
     (async () => {
       const res = await categoryService.getListCategory();
       setCategories(res);
@@ -138,20 +154,33 @@ const Product: FC = () => {
   }, []);
   return (
     <div className="product-page">
-      <h1 style={{ marginBottom: 20 }}>Quản lý mặt hàng</h1>
-      <Button
-        type="primary"
-        size="large"
-        onClick={() => {
-          handleOpenModal("create", initProduct);
-        }}
-      >
-        Tạo mặt hàng
-      </Button>
-      <Button type="link" onClick={getListProduct}>
-        <RedoOutlined />
-      </Button>
-      <TableSearch columns={columns} data={products} />
+      <div className="table-headding">
+        <h1>Quản lý mặt hàng</h1>
+        <Button
+          type="default"
+          color="default"
+          className="btn-add"
+          size="large"
+          onClick={() => handleOpenModal("create", initProduct)}
+          icon={<PlusOutlined />}
+        >
+          Tạo mặt hàng
+        </Button>
+      </div>
+
+      <CommonSearch
+        originalData={originalProducts}
+        data={products}
+        setData={setProducts}
+        onRefresh={getListProduct}
+      />
+      <CommonTable
+        originalData={originalProducts}
+        data={products}
+        setData={setProducts}
+        isLoading={isLoading}
+        columns={columns}
+      />
       <ProductModal open={open} setOpen={setOpen} categories={categories} />
     </div>
   );

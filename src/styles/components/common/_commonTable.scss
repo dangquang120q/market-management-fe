@@ -1,0 +1,11 @@
+.common-table-container {
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 8px;
+  position: relative;
+
+  .total-item {
+    position: absolute;
+    bottom: 3rem;
+  }
+}
