@@ -1,7 +1,8 @@
-import { RedoOutlined } from "@ant-design/icons";
-import { Button, Divider, Space, TableProps } from "antd";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Space, TableProps, Tooltip } from "antd";
+import { CommonSearch, CommonTable } from "components/common";
 import MemberModal from "components/Modal/Member";
-import TableSearch from "components/TableSearch";
+import { APP_NAME } from "constant";
 import { initMember } from "constant/initial";
 import { IMember } from "constant/interface";
 import { ModalType, ModalTypeType } from "constant/type";
@@ -14,6 +15,8 @@ const MemberPage: FC = () => {
     item: initMember,
   });
   const [members, setMembers] = useState<Array<IMember>>([]);
+  const [originalMembers, setOriginalMembers] = useState<Array<IMember>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const handleOpenModal = (status: ModalTypeType, item: IMember) => {
     setOpen({
       type: status,
@@ -68,59 +71,85 @@ const MemberPage: FC = () => {
     },
 
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "id",
       key: "id",
       render: (value: string, rec: IMember) => {
         return (
           <Space>
-            <Button
-              type="primary"
-              onClick={() => {
-                handleOpenModal("edit", rec);
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              type="primary"
-              danger
-              onClick={() => {
-                handleDeleteMember(value);
-              }}
-            >
-              Delete
-            </Button>
+            <Tooltip placement="top" title="Sửa">
+              <Button
+                type="link"
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  handleOpenModal("edit", rec);
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip placement="top" title="Xóa">
+              <Popconfirm
+                title={`Xóa ${rec.name}`}
+                description="Bạn có chắc chắn muốn xóa !"
+                onConfirm={() => handleDeleteMember(value)}
+                okText="Có"
+                cancelText="Không"
+              >
+                <Button
+                  icon={<DeleteOutlined />}
+                  type="link"
+                  size="small"
+                  danger
+                />
+              </Popconfirm>
+            </Tooltip>
+
           </Space>
         );
       },
     },
   ];
   const getListMember = async () => {
+    setIsLoading(true);
     const res = await memberService.getListMember();
     setMembers(res);
+    setOriginalMembers(res);
+    setIsLoading(false);
   };
   useEffect(() => {
+    document.title = `Quản lý hội viên - ${APP_NAME}`;
     getListMember();
   }, []);
 
   return (
     <div className="product-page">
-      <h1 style={{ marginBottom: 20 }}>Quản lý hội viên</h1>
-      <Divider />
-      <Button
-        type="primary"
-        size="large"
-        onClick={() => {
-          handleOpenModal("create", initMember);
-        }}
-      >
-        Tạo hội viên
-      </Button>
-      <Button type="link" onClick={getListMember}>
-        <RedoOutlined />
-      </Button>
-      <TableSearch columns={columns} data={members} />
+      <div className="table-headding">
+        <h1>Quản lý hội viên</h1>
+        <Button
+          type="default"
+          color="default"
+          className="btn-add"
+          size="large"
+          onClick={() => handleOpenModal("create", initMember)}
+          icon={<PlusOutlined />}
+        >
+          Tạo hội viên
+        </Button>
+      </div>
+      <CommonSearch
+        originalData={originalMembers}
+        data={members}
+        setData={setMembers}
+        onRefresh={getListMember}
+      />
+      <CommonTable
+        originalData={originalMembers}
+        data={members}
+        setData={setMembers}
+        isLoading={isLoading}
+        columns={columns}
+      />
       <MemberModal open={open} setOpen={setOpen} />
     </div>
   );
