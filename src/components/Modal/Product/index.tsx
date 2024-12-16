@@ -31,20 +31,31 @@ const ProductModal: FC<{
       showMessage("error", "Mặt hàng đã tồn tại!");
     }
   };
+
+  const getTitleModal = (typeModal: string): string => {
+    switch (typeModal) {
+      case 'create': 
+        return 'Thêm mới mặt hàng';
+      case 'edit':
+        return `Sửa - ${open.item.name}`;
+      default: 
+      return 'Chi tiết mặt hàng'
+    }
+  }
   return (
     <Modal
       className="app-modal"
       open={open.type != ""}
       onCancel={handleClose}
       footer={null}
-      title="Chi tiết sản phẩm"
+      title={getTitleModal(open.type)}
       destroyOnClose
     >
       <Form initialValues={open.item} onFinish={handleSubmit} layout="vertical">
-        <Form.Item name="id" label="Mã sản phẩm">
+        <Form.Item name="id" label="Mã mặt hàng">
           <Input readOnly size="large" />
         </Form.Item>
-        <Form.Item name="name" label="Tên sản phẩm">
+        <Form.Item name="name" label="Tên mặt hàng">
           <Input size="large" />
         </Form.Item>
         <Row gutter={20}>
@@ -79,7 +90,7 @@ const ProductModal: FC<{
         </Form.Item>
         <Space className="button-space">
           <Button type="primary" size="large" htmlType="submit">
-            Lưu sản phẩm
+            Lưu mặt hàng
           </Button>
         </Space>
       </Form>

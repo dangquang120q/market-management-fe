@@ -4,7 +4,7 @@ import {
   EditOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Space, TableProps, Tooltip } from "antd";
+import { Button, Popconfirm, Space, TableProps, Tooltip } from "antd";
 import { CommonSearch, CommonTable } from "components/common";
 import ProductModal from "components/Modal/Product";
 import { APP_NAME } from "constant";
@@ -96,7 +96,7 @@ const Product: FC = () => {
       render: (value) => categories.find((item) => item.id == value)?.name,
     },
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "id",
       key: "id",
       render: (value: string | number, rec: IProduct) => {
@@ -106,37 +106,41 @@ const Product: FC = () => {
               <Button
                 type="link"
                 size="small"
+                icon={<BarsOutlined />}
                 onClick={() => {
-                  navigate(ROUTE_URL.PRODUCT + `/shipment/${value}`);
+                  navigate(ROUTE_URL.PRODUCT + `/shipment/${value}`, {
+                    state: { extraData: rec },
+                  });
                 }}
-              >
-                <BarsOutlined />
-              </Button>
+              />
             </Tooltip>
 
             <Tooltip placement="top" title="Sửa">
               <Button
                 type="link"
                 size="small"
+                icon={<EditOutlined />}
                 onClick={() => {
                   handleOpenModal("edit", rec);
                 }}
-              >
-                <EditOutlined />
-              </Button>
+              />
             </Tooltip>
 
             <Tooltip placement="top" title="Xóa">
-              <Button
-                type="link"
-                size="small"
-                danger
-                onClick={() => {
-                  handleDeleteProduct(value);
-                }}
+              <Popconfirm
+                title={`Xóa ${rec.name}`}
+                description="Bạn có chắc chắn muốn xóa !"
+                onConfirm={() => handleDeleteProduct(value)}
+                okText="Có"
+                cancelText="Không"
               >
-                <DeleteOutlined />
-              </Button>
+                <Button
+                  icon={<DeleteOutlined />}
+                  type="link"
+                  size="small"
+                  danger
+                />
+              </Popconfirm>
             </Tooltip>
           </Space>
         );

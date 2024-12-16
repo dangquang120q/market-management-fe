@@ -1,32 +1,43 @@
-import { LeftOutlined } from "@ant-design/icons";
-import { Button, TableProps } from "antd";
+import { InboxOutlined, LeftOutlined } from "@ant-design/icons";
+import { Button, TableProps, Tooltip } from "antd";
+import { CommonSearch, CommonTable } from "components/common";
 import ShipmentModal from "components/Modal/Shipment";
 import NumberFormat from "components/NumberFormat";
-import TableSearch from "components/TableSearch";
 import { initProductReceipt } from "constant/initial";
 import { IProductReceipt } from "constant/interface";
 import { ModalType } from "constant/type";
 import { FC, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ROUTE_URL } from "routes";
 import { productService } from "services/product";
 
 const ProductShipment: FC = () => {
   const { id } = useParams();
-  const [data, setData] = useState<Array<IProductReceipt>>([]);
+  const location = useLocation();
+  const { extraData } = location.state || {};
   const navigate = useNavigate();
+
+  const [data, setData] = useState<Array<IProductReceipt>>([]);
+  const [originalData, setOriginalData] = useState<Array<IProductReceipt>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [open, setOpen] = useState<ModalType<IProductReceipt>>({
     type: "",
     item: initProductReceipt,
   });
+  
   const fetchData = async () => {
-    if (id)
+    if (id) {
+      setIsLoading(true);
       try {
         const res = await productService.getListShipment({ productId: +id });
         setData(res.data.data);
+        setOriginalData(res.data.data);
+        setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         console.log(error);
       }
+    }
   };
   useEffect(() => {
     fetchData();
@@ -83,33 +94,53 @@ const ProductShipment: FC = () => {
       dataIndex: "id",
       key: "id",
       render: (_val, record) => (
-        <Button
-          type="default"
-          onClick={() => {
-            setOpen({
-              item: record,
-              type: "edit",
-            });
-          }}
-        >
-          Xuất kho
-        </Button>
+        <Tooltip placement="top" title="Xuất kho">
+          <Button
+            type="link"
+            size="small"
+            icon={<InboxOutlined />}
+            onClick={() => {
+              setOpen({
+                item: record,
+                type: "edit",
+              });
+            }}
+          />
+        </Tooltip>
       ),
     },
   ];
 
   return (
     <div className="product-shipment">
-      <h1
-        style={{ marginBottom: 20, cursor: "pointer" }}
-        onClick={() => {
-          navigate(ROUTE_URL.PRODUCT);
-        }}
-      >
-        <LeftOutlined />
-        <span>Quản lý lô hàng</span>
-      </h1>
-      <TableSearch columns={columns} data={data} />
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Tooltip placement="top" title="Quay về">
+          <Button
+            type="link"
+            size="large"
+            icon={<LeftOutlined />}
+            onClick={() => {
+              navigate(ROUTE_URL.PRODUCT);
+            }}
+          />
+        </Tooltip>
+
+        <h1>{extraData && extraData?.name ? `Quản lý lô hàng - ${extraData?.name}`: 'Quản lý lô hàng'}</h1>
+      </div>
+
+      <CommonSearch
+        originalData={originalData}
+        data={data}
+        setData={setData}
+        onRefresh={fetchData}
+      />
+      <CommonTable
+        originalData={originalData}
+        data={data}
+        setData={setData}
+        isLoading={isLoading}
+        columns={columns}
+      />
       <ShipmentModal open={open} setOpen={setOpen} fetchData={fetchData} />
     </div>
   );
