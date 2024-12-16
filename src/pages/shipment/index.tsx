@@ -3,6 +3,7 @@ import { Button, TableProps, Tooltip } from "antd";
 import { CommonSearch, CommonTable } from "components/common";
 import ShipmentModal from "components/Modal/Shipment";
 import NumberFormat from "components/NumberFormat";
+import { APP_NAME } from "constant";
 import { initProductReceipt } from "constant/initial";
 import { IProductReceipt } from "constant/interface";
 import { ModalType } from "constant/type";
@@ -24,7 +25,7 @@ const ProductShipment: FC = () => {
     type: "",
     item: initProductReceipt,
   });
-  
+
   const fetchData = async () => {
     if (id) {
       setIsLoading(true);
@@ -40,6 +41,11 @@ const ProductShipment: FC = () => {
     }
   };
   useEffect(() => {
+    document.title = `${
+      extraData && extraData?.name
+        ? `Quản lý lô hàng - ${extraData?.name}`
+        : "Quản lý lô hàng"
+    } - ${APP_NAME}`;
     fetchData();
   }, [id]);
   const columns: TableProps<IProductReceipt>["columns"] = [
@@ -113,7 +119,7 @@ const ProductShipment: FC = () => {
 
   return (
     <div className="product-shipment">
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: "flex", alignItems: "center" }}>
         <Tooltip placement="top" title="Quay về">
           <Button
             type="link"
@@ -125,7 +131,11 @@ const ProductShipment: FC = () => {
           />
         </Tooltip>
 
-        <h1>{extraData && extraData?.name ? `Quản lý lô hàng - ${extraData?.name}`: 'Quản lý lô hàng'}</h1>
+        <h1>
+          {extraData && extraData?.name
+            ? `Quản lý lô hàng - ${extraData?.name}`
+            : "Quản lý lô hàng"}
+        </h1>
       </div>
 
       <CommonSearch
