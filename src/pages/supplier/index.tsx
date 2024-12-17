@@ -73,7 +73,7 @@ const Supplier: FC = () => {
     },
 
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "id",
       key: "id",
       render: (value: string | number, rec: ISupplier) => {

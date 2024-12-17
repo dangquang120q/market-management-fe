@@ -45,7 +45,7 @@ const Category: FC = () => {
       width: "50%",
     },
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "id",
       key: "id",
       render: (value: string | number, rec: ICategory) => {
