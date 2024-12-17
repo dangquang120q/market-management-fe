@@ -1,7 +1,8 @@
-import { RedoOutlined } from "@ant-design/icons";
-import { Button, Space, TableProps } from "antd";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Space, TableProps, Tooltip } from "antd";
+import { CommonSearch, CommonTable } from "components/common";
 import SupplierModal from "components/Modal/Supplier";
-import TableSearch from "components/TableSearch";
+import { APP_NAME } from "constant";
 import { initSupplier } from "constant/initial";
 import { ISupplier } from "constant/interface";
 import { ModalType, ModalTypeType } from "constant/type";
@@ -14,6 +15,8 @@ const Supplier: FC = () => {
     item: initSupplier,
   });
   const [suppliers, setSuppliers] = useState<Array<ISupplier>>([]);
+  const [originalSuppliers, setOriginalSuppliers] = useState<Array<ISupplier>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const handleOpenModal = (status: ModalTypeType, item: ISupplier) => {
     setOpen({
       type: status,
@@ -76,51 +79,78 @@ const Supplier: FC = () => {
       render: (value: string | number, rec: ISupplier) => {
         return (
           <Space>
-            <Button
-              type="primary"
-              onClick={() => {
-                handleOpenModal("edit", rec);
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              type="primary"
-              danger
-              onClick={() => {
-                handleDeleteSupplier(value);
-              }}
-            >
-              Delete
-            </Button>
+            <Tooltip placement="top" title="Sửa">
+              <Button
+                type="link"
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  handleOpenModal("edit", rec);
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip placement="top" title="Xóa">
+              <Popconfirm
+                title={`Xóa ${rec.name}`}
+                description="Bạn có chắc chắn muốn xóa !"
+                onConfirm={() => handleDeleteSupplier(value)}
+                okText="Có"
+                cancelText="Không"
+              >
+                <Button
+                  icon={<DeleteOutlined />}
+                  type="link"
+                  size="small"
+                  danger
+                />
+              </Popconfirm>
+            </Tooltip>
           </Space>
         );
       },
     },
   ];
   const getListSuppliers = async () => {
+    setIsLoading(true);
     const res = await supplierService.getListSupplier();
     setSuppliers(res);
+    setOriginalSuppliers(res);
+    setIsLoading(false);
   };
   useEffect(() => {
+    document.title = `Quản lý nhà cung cấp - ${APP_NAME}`;
     getListSuppliers();
   }, []);
   return (
     <div className="product-page">
-      <h1 style={{ marginBottom: 20 }}>Quản lý nhà cung cấp</h1>
-      <Button
-        type="primary"
-        size="large"
-        onClick={() => {
-          handleOpenModal("create", initSupplier);
-        }}
-      >
-        Tạo nhà cung cấp
-      </Button>
-      <Button type="link" onClick={getListSuppliers}>
-        <RedoOutlined />
-      </Button>
-      <TableSearch columns={columns} data={suppliers} />
+      <div className="table-headding">
+        <h1>Quản lý nhà cung cấp</h1>
+        <Button
+          type="default"
+          color="default"
+          className="btn-add"
+          size="large"
+          onClick={() => handleOpenModal("create", initSupplier)}
+          icon={<PlusOutlined />}
+        >
+          Tạo nhà cung cấp
+        </Button>
+      </div>
+
+      <CommonSearch
+        originalData={originalSuppliers}
+        data={suppliers}
+        setData={setSuppliers}
+        onRefresh={getListSuppliers}
+      />
+      <CommonTable
+        originalData={originalSuppliers}
+        data={suppliers}
+        setData={setSuppliers}
+        isLoading={isLoading}
+        columns={columns}
+      />
       <SupplierModal open={open} setOpen={setOpen} />
     </div>
   );
