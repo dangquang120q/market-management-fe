@@ -1,8 +1,12 @@
-import { RedoOutlined } from "@ant-design/icons";
-import { Button, Space, TableProps } from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import { Button, Popconfirm, Space, TableProps, Tooltip } from "antd";
+import { CommonSearch, CommonTable } from "components/common";
 import StaffModal from "components/Modal/Staff";
-import TableSearch from "components/TableSearch";
-import { ROLE } from "constant";
+import { APP_NAME, ROLE } from "constant";
 import { initStaff } from "constant/initial";
 import { IStaff } from "constant/interface";
 import { ModalType, ModalTypeType, RoleType } from "constant/type";
@@ -15,6 +19,8 @@ const Staff: FC = () => {
     item: initStaff,
   });
   const [staffs, setStaff] = useState<Array<IStaff>>([]);
+  const [originalStaffs, setOriginalStaffs] = useState<Array<IStaff>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const handleOpenModal = (status: ModalTypeType, item: IStaff) => {
     setOpen({
       type: status,
@@ -71,51 +77,78 @@ const Staff: FC = () => {
       render: (value: string | number, rec: IStaff) => {
         return (
           <Space>
-            <Button
-              type="primary"
-              onClick={() => {
-                handleOpenModal("edit", rec);
-              }}
-            >
-              Edit
-            </Button>
-            <Button
-              type="primary"
-              danger
-              onClick={() => {
-                handleDeleteStaff(value);
-              }}
-            >
-              Delete
-            </Button>
+            <Tooltip placement="top" title="Sửa">
+              <Button
+                type="link"
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  handleOpenModal("edit", rec);
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip placement="top" title="Xóa">
+              <Popconfirm
+                title={`Xóa ${rec.name}`}
+                description="Bạn có chắc chắn muốn xóa !"
+                onConfirm={() => handleDeleteStaff(value)}
+                okText="Có"
+                cancelText="Không"
+              >
+                <Button
+                  icon={<DeleteOutlined />}
+                  type="link"
+                  size="small"
+                  danger
+                />
+              </Popconfirm>
+            </Tooltip>
           </Space>
         );
       },
     },
   ];
   const getListStaff = async () => {
+    setIsLoading(true);
     const res = await userService.getListStaff();
     setStaff(res);
+    setOriginalStaffs(res);
+    setIsLoading(false);
   };
   useEffect(() => {
+    document.title = `Quản lý nhân viên - ${APP_NAME}`;
     getListStaff();
   }, []);
   return (
     <div className="product-page">
-      <h1 style={{ marginBottom: 20 }}>Quản lý nhân viên</h1>
-      <Button
-        type="primary"
-        size="large"
-        onClick={() => {
-          handleOpenModal("create", initStaff);
-        }}
-      >
-        Tạo nhân viên
-      </Button>
-      <Button type="link" onClick={getListStaff}>
-        <RedoOutlined />
-      </Button>
-      <TableSearch columns={columns} data={staffs} />
+      <div className="table-headding">
+        <h1>Quản lý nhân viên</h1>
+        <Button
+          type="default"
+          color="default"
+          className="btn-add"
+          size="large"
+          onClick={() => handleOpenModal("create", initStaff)}
+          icon={<PlusOutlined />}
+        >
+          Tạo nhân viên
+        </Button>
+      </div>
+
+      <CommonSearch
+        originalData={originalStaffs}
+        data={staffs}
+        setData={setStaff}
+        onRefresh={getListStaff}
+      />
+      <CommonTable
+        originalData={originalStaffs}
+        data={staffs}
+        setData={setStaff}
+        isLoading={isLoading}
+        columns={columns}
+      />
       <StaffModal open={open} setOpen={setOpen} />
     </div>
   );
