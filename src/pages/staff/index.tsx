@@ -71,7 +71,7 @@ const Staff: FC = () => {
       render: (val: RoleType) => ROLE[val],
     },
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "id",
       key: "id",
       render: (value: string | number, rec: IStaff) => {

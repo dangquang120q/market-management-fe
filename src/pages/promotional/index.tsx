@@ -1,18 +1,20 @@
 import {
-  DeleteFilled,
-  EditFilled,
-  RedoOutlined,
-  UnorderedListOutlined,
+  BarsOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Space, TableProps } from "antd";
+import { Button, Popconfirm, Space, TableProps, Tooltip } from "antd";
+import { CommonSearch, CommonTable } from "components/common";
 import PromotionalModal from "components/Modal/Promotional";
-import TableSearch from "components/TableSearch";
+import { APP_NAME } from "constant";
 import { initPromotional } from "constant/initial";
 import { IPromotional } from "constant/interface";
 import { ModalType, ModalTypeType } from "constant/type";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { ROUTE_URL } from "routes";
 import { promotionalService } from "services/promotional";
 
 const Promotional: FC = () => {
@@ -21,6 +23,9 @@ const Promotional: FC = () => {
     item: initPromotional,
   });
   const [promotionals, setPromotionals] = useState<Array<IPromotional>>([]);
+  const [originalPromotionals, setOriginalPromotionals] = useState<Array<IPromotional>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
   const handleOpenModal = (status: ModalTypeType, item: IPromotional) => {
     setOpen({
       type: status,
@@ -58,64 +63,97 @@ const Promotional: FC = () => {
       render: (val) => dayjs(val, "MM/DD/YYYY").format("DD/MM/YYYY"),
     },
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "id",
       key: "id",
       render: (value: string | number, rec: IPromotional) => {
         return (
           <Space>
-            <Button
-              type="link"
-              size="small"
-              onClick={() => {
-                handleOpenModal("edit", rec);
-              }}
-            >
-              <EditFilled />
-            </Button>
-            <Button
-              type="link"
-              size="small"
-              danger
-              onClick={() => {
-                handleDeletePromotional(value);
-              }}
-            >
-              <DeleteFilled />
-            </Button>
-            <Link to={`/promotional/detail/${value}`}>
-              <Button type="link" size="small">
-                <UnorderedListOutlined />
-              </Button>
-            </Link>
+            <Tooltip placement="top" title="Chương trình">
+              <Button
+                type="link"
+                size="small"
+                icon={<BarsOutlined />}
+                onClick={() => {
+                  navigate(ROUTE_URL.PROMOTIONAL + `/detail/${value}`, {
+                    state: { extraData: rec },
+                  });
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip placement="top" title="Sửa">
+              <Button
+                type="link"
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  handleOpenModal("edit", rec);
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip placement="top" title="Xóa">
+              <Popconfirm
+                title={`Xóa ${rec.name}`}
+                description="Bạn có chắc chắn muốn xóa !"
+                onConfirm={() => handleDeletePromotional(value)}
+                okText="Có"
+                cancelText="Không"
+              >
+                <Button
+                  icon={<DeleteOutlined />}
+                  type="link"
+                  size="small"
+                  danger
+                />
+              </Popconfirm>
+            </Tooltip>
           </Space>
         );
       },
     },
   ];
   const getListPromotional = async () => {
+    setIsLoading(true);
     const res = await promotionalService.getListPromotional();
     setPromotionals(res);
+    setOriginalPromotionals(res);
+    setIsLoading(false);
   };
   useEffect(() => {
+    document.title = `Quản lý chương trình khuyến mãi - ${APP_NAME}`;
     getListPromotional();
   }, []);
   return (
     <div className="product-page">
-      <h1 style={{ marginBottom: 20 }}>Quản lý chương trình khuyến mãi</h1>
-      <Button
-        type="primary"
-        size="large"
-        onClick={() => {
-          handleOpenModal("create", initPromotional);
-        }}
-      >
-        Tạo chương trình
-      </Button>
-      <Button type="link" onClick={getListPromotional}>
-        <RedoOutlined />
-      </Button>
-      <TableSearch columns={columns} data={promotionals} />
+      <div className="table-headding">
+        <h1>Quản lý chương trình khuyến mãi</h1>
+        <Button
+          type="default"
+          color="default"
+          className="btn-add"
+          size="large"
+          onClick={() => handleOpenModal("create", initPromotional)}
+          icon={<PlusOutlined />}
+        >
+          Tạo chương trình
+        </Button>
+      </div>
+
+      <CommonSearch
+        originalData={originalPromotionals}
+        data={promotionals}
+        setData={setPromotionals}
+        onRefresh={getListPromotional}
+      />
+      <CommonTable
+        originalData={originalPromotionals}
+        data={promotionals}
+        setData={setPromotionals}
+        isLoading={isLoading}
+        columns={columns}
+      />
       <PromotionalModal open={open} setOpen={setOpen} />
     </div>
   );
