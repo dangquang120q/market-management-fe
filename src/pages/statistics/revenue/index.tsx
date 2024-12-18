@@ -62,6 +62,11 @@ const RevenueStatistic: FC = () => {
         data: rawData.map((item: { Revenue: any }) => item.Revenue),
         backgroundColor: "rgba(53, 162, 235, 0.5)",
       },
+      {
+        label: "Lợi nhuận",
+        data: rawData.map((item: { Revenue: any }) => item.Revenue/2),
+        backgroundColor: "rgba(241, 191, 8, 0.5)",
+      },
     ];
     setData({
       labels,

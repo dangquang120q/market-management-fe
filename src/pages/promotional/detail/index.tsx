@@ -169,7 +169,7 @@ const PromotionalDetail: FC = () => {
           onClick={() => handleOpenModal("create", initPromoProduct)}
           icon={<PlusOutlined />}
         >
-          Tạo chương trình
+          Tạo sản phẩm
         </Button>
       </div>
       <CommonSearch

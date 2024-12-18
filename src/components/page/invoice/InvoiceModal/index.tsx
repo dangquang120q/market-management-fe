@@ -1,7 +1,7 @@
 import { Col, Modal, Row, Table, TableProps } from "antd";
 import { IInvoice, IProductInvoice } from "constant/interface";
 import { FC, memo } from "react";
-import logo from "resources/image/winmart-logo.png";
+import logo from "resources/image/logo_horizontal.png";
 import dayjs from "dayjs";
 import NumberFormat from "components/NumberFormat";
 import Barcode from "react-barcode";
