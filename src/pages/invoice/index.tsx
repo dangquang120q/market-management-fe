@@ -1,6 +1,8 @@
-import { Button, Divider, Space, TableProps } from "antd";
+import { BarsOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Space, TableProps, Tooltip } from "antd";
+import { CommonSearch, CommonTable } from "components/common";
 import NumberFormat from "components/NumberFormat";
-import TableSearch from "components/TableSearch";
+import { APP_NAME } from "constant";
 import { IInvoice } from "constant/interface";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
@@ -10,6 +12,8 @@ import { invoiceService } from "services/invoice";
 
 const InvoicePage: FC = () => {
   const [invoices, setInvoices] = useState<Array<IInvoice>>([]);
+  const [originalInvoices, setOriginalInvoices] = useState<Array<IInvoice>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const columns: TableProps<IInvoice>["columns"] = [
     {
@@ -64,37 +68,67 @@ const InvoicePage: FC = () => {
         dayjs(a.createdDate).unix() - dayjs(b.createdDate).unix(),
     },
     {
-      title: "Action",
+      title: "Hành động",
       dataIndex: "id",
       key: "id",
       render: (value: string) => {
         return (
           <Space>
-            <Button
-              type="link"
-              onClick={() => {
-                navigate(ROUTE_URL.INVOICE + `/detail/${value}`);
-              }}
-            >
-              Detail
-            </Button>
+            <Tooltip placement="top" title="Chi tiết">
+              <Button
+                type="link"
+                size="small"
+                icon={<BarsOutlined />}
+                onClick={() => {
+                  navigate(ROUTE_URL.INVOICE + `/detail/${value}`);
+                }}
+              />
+            </Tooltip>
           </Space>
         );
       },
     },
   ];
   const getListInvoice = async () => {
+    setIsLoading(true);
     const res = await invoiceService.getListInvoice();
     setInvoices(res);
+    setOriginalInvoices(res);
+    setIsLoading(false);
   };
   useEffect(() => {
+    document.title = `Danh sách hóa đơn bán hàng - ${APP_NAME}`;
     getListInvoice();
   }, []);
   return (
     <div className="product-page">
-      <h1 style={{ marginBottom: 20 }}>Danh sách hóa đơn bán hàng</h1>
-      <Divider />
-      <TableSearch columns={columns} data={invoices} />
+      <div className="table-headding">
+        <h1>Danh sách hóa đơn bán hàng</h1>
+        <Button
+          type="default"
+          color="default"
+          className="btn-add"
+          size="large"
+          onClick={() => navigate(ROUTE_URL.INVOICE + `/create`)}
+          icon={<PlusOutlined />}
+        >
+          Tạo hóa đơn
+        </Button>
+      </div>
+
+      <CommonSearch
+        originalData={originalInvoices}
+        data={invoices}
+        setData={setInvoices}
+        onRefresh={getListInvoice}
+      />
+      <CommonTable
+        originalData={originalInvoices}
+        data={invoices}
+        setData={setInvoices}
+        isLoading={isLoading}
+        columns={columns}
+      />
     </div>
   );
 };
