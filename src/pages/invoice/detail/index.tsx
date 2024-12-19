@@ -12,6 +12,7 @@ import {
   Skeleton,
 } from "antd";
 import NumberFormat from "components/NumberFormat";
+import { APP_NAME } from "constant";
 import { initInvoice } from "constant/initial";
 import { IInvoiceDetail, IProductInvoice } from "constant/interface";
 import dayjs from "dayjs";
@@ -37,6 +38,7 @@ const InvoiceDetail: FC = () => {
   };
 
   useEffect(() => {
+    document.title = `Chi tiết hóa đơn - ${APP_NAME}`;
     fetchData();
   }, [id]);
 
@@ -58,6 +60,11 @@ const InvoiceDetail: FC = () => {
       title: "Đơn giá",
       dataIndex: "price",
       key: "price",
+      render: (_value, rec) => (
+        <p>
+          <NumberFormat value={rec.price} /> đ
+        </p>
+      ),
     },
     {
       title: "SL",
@@ -68,7 +75,11 @@ const InvoiceDetail: FC = () => {
       title: "T.Tiền",
       dataIndex: "total",
       key: "total",
-      render: (_val: any, rec: any) => rec.price * rec.qty,
+      render: (_value, rec) => (
+        <p>
+          <NumberFormat value={rec.price * rec.qty} /> đ
+        </p>
+      ),
     },
   ];
 
@@ -140,21 +151,19 @@ const InvoiceDetail: FC = () => {
           <div className="invoice-total-item">
             <b>Tổng giá trị hóa đơn:</b>
             <p>
-              <NumberFormat value={invoice?.total} />
+              <NumberFormat value={invoice?.total} />  đ
             </p>
           </div>
           <div className="invoice-total-item">
             <b>Tổng tiền đã giảm:</b>
             <p>
-              <NumberFormat value={-invoice?.reducedAmount * 1000} />
+              <NumberFormat value={-invoice?.reducedAmount * 1000} />  đ
             </p>
           </div>
           <div className="invoice-total-item">
             <b>Tổng tiền thanh toán:</b>
             <p>
-              <NumberFormat
-                value={invoice.total - invoice.reducedAmount * 1000}
-              />
+              <NumberFormat value={invoice.total - invoice.reducedAmount * 1000} />  đ
             </p>
           </div>
         </Skeleton>
