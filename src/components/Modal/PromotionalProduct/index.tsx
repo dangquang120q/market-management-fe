@@ -19,6 +19,7 @@ const PromoProductModal: FC<{
       type: "",
       item: initPromoProduct,
     });
+    form.resetFields();
   };
   const handleSubmit = async (value: any) => {
     const data = {
@@ -35,19 +36,29 @@ const PromoProductModal: FC<{
       }
       fetchData();
     } catch (error) {
-      showMessage("error", "Thêm sản phẩm thất bại!");
+      showMessage("error", "Thêm mặt hàng thất bại!");
     }
   };
   useEffect(() => {
     form.setFieldsValue(open.item);
   }, [open.item]);
+  const getTitleModal = (typeModal: string): string => {
+    switch (typeModal) {
+      case 'create': 
+        return 'Thêm mới mặt hàng khuyến mãi';
+      case 'edit':
+        return `Sửa mặt hàng khuyến mãi - ${open.item.name}`;
+      default: 
+      return 'Chi tiết mặt hàng khuyến mãi'
+    }
+  }
   return (
     <Modal
       className="app-modal"
       open={open.type != ""}
       onCancel={handleClose}
       footer={null}
-      title="Chi tiết sản phẩm"
+      title={getTitleModal(open.type)}
       destroyOnClose
       width={600}
     >
@@ -60,15 +71,15 @@ const PromoProductModal: FC<{
         <SearchProduct form={form} />
         <Form.Item
           name="productId"
-          label="Mã sản phẩm"
-          rules={[{ required: true, message: "Chưa chọn sản phẩm!" }]}
+          label="Mã mặt hàng"
+          rules={[{ required: true, message: "Chưa chọn mặt hàng!" }]}
         >
           <Input readOnly size="large" />
         </Form.Item>
         <Form.Item
           name="name"
-          label="Tên sản phẩm"
-          rules={[{ required: true, message: "Chưa chọn sản phẩm!" }]}
+          label="Tên mặt hàng"
+          rules={[{ required: true, message: "Chưa chọn mặt hàng!" }]}
         >
           <Input readOnly size="large" />
         </Form.Item>
@@ -81,7 +92,7 @@ const PromoProductModal: FC<{
         </Form.Item>
         <Space className="button-space">
           <Button type="primary" size="large" htmlType="submit">
-            Lưu sản phẩm
+            Lưu mặt hàng
           </Button>
         </Space>
       </Form>
