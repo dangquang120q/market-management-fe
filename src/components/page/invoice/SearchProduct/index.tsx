@@ -93,33 +93,46 @@ const SearchProduct: FC<{
     getListProduct();
   }, []);
   return (
-    <div className="search-product">
-      <h2>Tìm mặt hàng</h2>
-      <Search
-        allowClear
-        placeholder="Tìm kiếm"
-        enterButton="Search"
-        onChange={(e) => {
-          onChange(e.target.value);
+    <div className="search-product" style={{ marginBottom: 10, position: 'relative' }}>
+    <h2>Tìm mặt hàng</h2>
+    <Search
+      style={{ maxWidth: '100%' }}
+      placeholder="Tìm kiếm mặt hàng"
+      allowClear
+      onChange={(e) => {
+        onChange(e.target.value);
+      }}
+      size="large"
+      enterButton
+    />
+    {debounceKey && (
+      <Table
+        ref={tableRef}
+        columns={columns}
+        dataSource={dataSource}
+        pagination={false}
+        className="result-table"
+        scroll={{ y: 250 }}
+        locale={{ emptyText: "Không tìm thấy sản phẩm" }}
+        style={{ 
+          position: 'absolute', 
+          top: '100%', 
+          left: 0, 
+          right: 0, 
+          zIndex: 1, 
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' 
+        }}
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              handleSelect(record);
+            },
+            style: { cursor: 'pointer' }
+          };
         }}
       />
-      {dataSource.length > 0 && (
-        <Table
-          ref={tableRef}
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false}
-          className="result-table"
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                handleSelect(record);
-              },
-            };
-          }}
-        />
-      )}
-    </div>
+    )}
+  </div>
   );
 };
 export default SearchProduct;

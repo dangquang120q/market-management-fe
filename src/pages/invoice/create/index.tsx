@@ -1,4 +1,9 @@
-import { MinusSquareOutlined, PlusSquareOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  LeftOutlined,
+  MinusSquareOutlined,
+  PlusSquareOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -9,22 +14,22 @@ import {
   Space,
   Table,
   TableProps,
+  Tooltip,
+  Card,
 } from "antd";
 import NumberFormat from "components/NumberFormat";
 import InvoiceModal from "components/page/invoice/InvoiceModal";
 import SearchProduct from "components/page/invoice/SearchProduct";
+import { APP_NAME } from "constant";
 import { initMember } from "constant/initial";
 import { IInvoice, IMember, IProductInvoice } from "constant/interface";
 import { FC, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTE_URL } from "routes";
 import { invoiceService } from "services/invoice";
 import { memberService } from "services/member";
 import { userStore } from "store/user";
 import { genIdbyDate } from "utils";
-
-const iconStyle = {
-  cursor: "pointer",
-  fontSize: 16,
-};
 
 const Invoice: FC = () => {
   const [selected, setSelected] = useState<Array<IProductInvoice>>([]);
@@ -34,6 +39,7 @@ const Invoice: FC = () => {
   });
   const [members, setMembers] = useState<Array<IMember>>([]);
   const { id } = userStore();
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const total = useMemo(() => {
     return selected.reduce(
@@ -91,6 +97,13 @@ const Invoice: FC = () => {
       title: "Giá",
       dataIndex: "promoPrice",
       key: "promoPrice",
+      render: (val, rec) => {
+        return (
+          <Space>
+            <NumberFormat value={val || rec.price} /> đ
+          </Space>
+        );
+      },
     },
     {
       title: "Số lượng",
@@ -98,22 +111,24 @@ const Invoice: FC = () => {
       key: "qty",
       render: (value, rec) => {
         return (
-          <Space>
-            <MinusSquareOutlined
-              style={iconStyle}
+            <Space>
+            <Button
+              icon={<MinusSquareOutlined />}
+              type="link"
               onClick={() => {
-                handleChangeQuantity(rec.id, -1);
+              handleChangeQuantity(rec.id, -1);
               }}
             />
             <p>{value}</p>
-            <PlusSquareOutlined
-              style={iconStyle}
+            <Button
+              icon={<PlusSquareOutlined />}
+              type="link"
               onClick={() => {
-                if (rec.saleTotal && rec.saleTotal > value)
-                  handleChangeQuantity(rec.id, 1);
+              if (rec.saleTotal && rec.saleTotal > value)
+                handleChangeQuantity(rec.id, 1);
               }}
             />
-          </Space>
+            </Space>
         );
       },
     },
@@ -121,7 +136,13 @@ const Invoice: FC = () => {
       title: "Tổng tiền",
       dataIndex: "total",
       key: "total",
-      render: (_val, rec) => (rec.promoPrice || rec.price) * rec.qty,
+      render: (_val, rec) => {
+        return (
+          <Space>
+            <NumberFormat value={(rec.promoPrice || rec.price) * rec.qty} /> đ
+          </Space>
+        );
+      },
     },
     {
       title: "",
@@ -130,15 +151,17 @@ const Invoice: FC = () => {
       render: (val) => {
         return (
           <Space>
-            <Button
-              type="link"
-              danger
-              onClick={() => {
-                handleDelete(val);
-              }}
-            >
-              Delete
-            </Button>
+            <Tooltip placement="top" title="Xóa">
+              <Button
+                icon={<DeleteOutlined />}
+                type="link"
+                size="small"
+                danger
+                onClick={() => {
+                  handleDelete(val);
+                }}
+              />
+            </Tooltip>
           </Space>
         );
       },
@@ -149,24 +172,35 @@ const Invoice: FC = () => {
     setMembers(res);
   };
   useEffect(() => {
+    document.title = `Tạo hóa đơn bán hàng - ${APP_NAME}`;
     getListMember();
   }, []);
   return (
     <div className="invoice-create">
-      <h1>Hóa đơn thanh toán</h1>
+      <Space>
+        <Tooltip placement="top" title="Quay về">
+          <Button
+            type="link"
+            size="large"
+            icon={<LeftOutlined />}
+            onClick={() => {
+              navigate(ROUTE_URL.INVOICE);
+            }}
+          />
+        </Tooltip>
+        <h1>Tạo hóa đơn bán hàng</h1>
+      </Space>
       <Divider />
       <Row className="invoice-wrapper" gutter={30}>
         <Col span={16}>
-          <div className="product-list">
+          <Card title="Danh sách mặt hàng" bordered={false}>
             <SearchProduct selected={selected} setSelected={setSelected} />
-            <h2>Danh sách mặt hàng</h2>
             <Table columns={columns} dataSource={selected} />
-          </div>
+          </Card>
         </Col>
-        <Col span={8} className="total">
-          <div className="total-wrapper">
-            <h2>Thông tin chung </h2>
-            <Space>
+        <Col span={8}>
+          <Card title="Thông tin chung" bordered={false}>
+            <Space style={{ paddingBottom: "10px" }}>
               <p>Hội viên:</p>
               <Select
                 showSearch
@@ -195,10 +229,10 @@ const Invoice: FC = () => {
                 }))}
               />
             </Space>
-            <Space>
+            <Space style={{ display: member.id ? "block" : "none" }}>
               <p>Điểm tích lũy: {member.point}</p>
             </Space>
-            <Space>
+            <Space style={{ padding: "10px 0" }}>
               <p>Đổi điểm</p>
               <InputNumber
                 max={member.point}
@@ -238,7 +272,7 @@ const Invoice: FC = () => {
             >
               Lưu hóa đơn
             </Button>
-          </div>
+          </Card>
         </Col>
       </Row>
       <InvoiceModal open={modalOpen} setOpen={setModalOpen} invoice={invoice} />
