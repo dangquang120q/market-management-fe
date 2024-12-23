@@ -21,7 +21,8 @@ import { userService } from "services/user";
 const StaffModal: FC<{
   open: ModalType<IStaff>;
   setOpen: Dispatch<SetStateAction<ModalType<IStaff>>>;
-}> = ({ open, setOpen }) => {
+  getList: () => void;
+}> = ({ open, setOpen, getList }) => {
   const handleClose = () => {
     setOpen({
       type: "",
@@ -44,17 +45,28 @@ const StaffModal: FC<{
       } else {
         await userService.updateStaff(value);
       }
+      getList();
     } catch (error) {
       showMessage("error", "Nhân viên đã tồn tại!");
     }
   };
+  const getTitleModal = (typeModal: string): string => {
+    switch (typeModal) {
+      case 'create': 
+        return 'Thêm mới nhân viên';
+      case 'edit':
+        return `Sửa nhân viên`;
+      default: 
+      return 'Chi tiết nhân viên';
+    }
+  }
   return (
     <Modal
       className="app-modal"
       open={open.type != ""}
       onCancel={handleClose}
       footer={null}
-      title="Chi tiết nhân viên"
+      title={getTitleModal(open.type)}
       destroyOnClose
       width={600}
     >

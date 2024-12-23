@@ -47,7 +47,7 @@ const PromoProductModal: FC<{
       case 'create': 
         return 'Thêm mới mặt hàng khuyến mãi';
       case 'edit':
-        return `Sửa mặt hàng khuyến mãi - ${open.item.name}`;
+        return `Sửa mặt hàng khuyến mãi`;
       default: 
       return 'Chi tiết mặt hàng khuyến mãi'
     }

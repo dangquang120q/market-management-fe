@@ -12,7 +12,8 @@ const BoothModal: FC<{
   open: ModalType<IBooth>;
   setOpen: Dispatch<SetStateAction<ModalType<IBooth>>>;
   categories: Array<ICategory>;
-}> = ({ open, setOpen, categories }) => {
+  getList: () => void;
+}> = ({ open, setOpen, categories, getList }) => {
   const handleClose = () => {
     setOpen({
       type: "",
@@ -27,17 +28,29 @@ const BoothModal: FC<{
       } else {
         await boothService.updateBooth(value);
       }
+      getList();
     } catch (error) {
       showMessage("error", "Loại hàng đã tồn tại!");
     }
   };
+
+  const getTitleModal = (typeModal: string): string => {
+    switch (typeModal) {
+      case 'create': 
+        return 'Thêm mới gian hàng';
+      case 'edit':
+        return `Sửa gian hàng`;
+      default: 
+      return 'Chi tiết gian hàng';
+    }
+  }
   return (
     <Modal
       className="app-modal"
       open={open.type != ""}
       onCancel={handleClose}
       footer={null}
-      title="Chi tiết gian hàng"
+      title={getTitleModal(open.type)}
       destroyOnClose
     >
       <Form initialValues={open.item} onFinish={handleSubmit} layout="vertical">

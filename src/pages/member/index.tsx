@@ -150,7 +150,7 @@ const MemberPage: FC = () => {
         isLoading={isLoading}
         columns={columns}
       />
-      <MemberModal open={open} setOpen={setOpen} />
+      <MemberModal open={open} setOpen={setOpen} getList={getListMember} />
     </div>
   );
 };

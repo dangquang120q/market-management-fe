@@ -9,7 +9,8 @@ import { categoryService } from "services/category";
 const CategoryModal: FC<{
   open: ModalType<ICategory>;
   setOpen: Dispatch<SetStateAction<ModalType<ICategory>>>;
-}> = ({ open, setOpen }) => {
+  getList: () => void;
+}> = ({ open, setOpen, getList }) => {
   const handleClose = () => {
     setOpen({
       type: "",
@@ -24,17 +25,29 @@ const CategoryModal: FC<{
       } else {
         await categoryService.updateCategory(value);
       }
+      getList();
     } catch (error) {
       showMessage("error", "Loại hàng đã tồn tại!");
     }
   };
+
+  const getTitleModal = (typeModal: string): string => {
+    switch (typeModal) {
+      case 'create': 
+        return 'Thêm mới loại hàng';
+      case 'edit':
+        return `Sửa loại hàng`;
+      default: 
+      return 'Chi tiết loại hàng'
+    }
+  }
   return (
     <Modal
       className="app-modal"
       open={open.type != ""}
       onCancel={handleClose}
       footer={null}
-      title="Chi tiết loại hàng"
+      title={getTitleModal(open.type)}
       destroyOnClose
     >
       <Form initialValues={open.item} onFinish={handleSubmit} layout="vertical">

@@ -12,7 +12,8 @@ const { RangePicker } = DatePicker;
 const PromotionalModal: FC<{
   open: ModalType<IPromotional>;
   setOpen: Dispatch<SetStateAction<ModalType<IPromotional>>>;
-}> = ({ open, setOpen }) => {
+  getList: () => void;
+}> = ({ open, setOpen, getList }) => {
   const handleClose = () => {
     setOpen({
       type: "",
@@ -32,17 +33,28 @@ const PromotionalModal: FC<{
       } else {
         await promotionalService.updatePromotional(data);
       }
+      getList();
     } catch (error) {
       showMessage("error", "Sửa chương trình không thành công!");
     }
   };
+  const getTitleModal = (typeModal: string): string => {
+    switch (typeModal) {
+      case 'create': 
+        return 'Thêm mới chương trình';
+      case 'edit':
+        return `Sửa chương trình`;
+      default: 
+      return 'Chi tiết chương trình';
+    }
+  }
   return (
     <Modal
       className="app-modal"
       open={open.type != ""}
       onCancel={handleClose}
       footer={null}
-      title="Chi tiết chương trình"
+      title={getTitleModal(open.type)}
       destroyOnClose
     >
       <Form

@@ -151,7 +151,7 @@ const Supplier: FC = () => {
         isLoading={isLoading}
         columns={columns}
       />
-      <SupplierModal open={open} setOpen={setOpen} />
+      <SupplierModal open={open} setOpen={setOpen} getList={getListSuppliers} />
     </div>
   );
 };

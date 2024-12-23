@@ -20,7 +20,8 @@ import { memberService } from "services/member";
 const MemberModal: FC<{
   open: ModalType<IMember>;
   setOpen: Dispatch<SetStateAction<ModalType<IMember>>>;
-}> = ({ open, setOpen }) => {
+  getList: () => void;
+}> = ({ open, setOpen, getList }) => {
   const handleClose = () => {
     setOpen({
       type: "",
@@ -36,6 +37,7 @@ const MemberModal: FC<{
       } else {
         await memberService.updateMember(value);
       }
+      getList();
     } catch (error) {
       if (error) {
         showMessage("error", "Mã hội viên đã tồn tại!");
@@ -43,13 +45,24 @@ const MemberModal: FC<{
     }
   };
 
+  const getTitleModal = (typeModal: string): string => {
+    switch (typeModal) {
+      case 'create': 
+        return 'Thêm mới hội viên';
+      case 'edit':
+        return `Sửa hội viên`;
+      default: 
+      return 'Chi tiết hội viên'
+    }
+  }
+
   return (
     <Modal
       className="app-modal"
       open={open.type != ""}
       onCancel={handleClose}
       footer={null}
-      title="Chi tiết hội viên"
+      title={getTitleModal(open.type)}
       destroyOnClose
       width={600}
     >

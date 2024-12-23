@@ -185,7 +185,7 @@ const Product: FC = () => {
         isLoading={isLoading}
         columns={columns}
       />
-      <ProductModal open={open} setOpen={setOpen} categories={categories} />
+      <ProductModal open={open} setOpen={setOpen} categories={categories} getList={getListProduct} />
     </div>
   );
 };

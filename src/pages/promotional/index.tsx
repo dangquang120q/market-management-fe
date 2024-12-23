@@ -154,7 +154,7 @@ const Promotional: FC = () => {
         isLoading={isLoading}
         columns={columns}
       />
-      <PromotionalModal open={open} setOpen={setOpen} />
+      <PromotionalModal open={open} setOpen={setOpen} getList={getListPromotional}/>
     </div>
   );
 };

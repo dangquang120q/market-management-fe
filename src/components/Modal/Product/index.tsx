@@ -12,7 +12,8 @@ const ProductModal: FC<{
   open: ModalType<IProduct>;
   setOpen: Dispatch<SetStateAction<ModalType<IProduct>>>;
   categories: Array<ICategory>;
-}> = ({ open, setOpen, categories }) => {
+  getList: () => void;
+}> = ({ open, setOpen, categories, getList }) => {
   const handleClose = () => {
     setOpen({
       type: "",
@@ -27,6 +28,7 @@ const ProductModal: FC<{
       } else {
         await productService.updateProduct(value);
       }
+      getList();
     } catch (error) {
       showMessage("error", "Mặt hàng đã tồn tại!");
     }
@@ -37,7 +39,7 @@ const ProductModal: FC<{
       case 'create': 
         return 'Thêm mới mặt hàng';
       case 'edit':
-        return `Sửa - ${open.item.name}`;
+        return `Sửa mặt hàng`;
       default: 
       return 'Chi tiết mặt hàng'
     }

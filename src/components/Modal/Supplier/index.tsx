@@ -9,7 +9,8 @@ import { supplierService } from "services/supplier";
 const SupplierModal: FC<{
   open: ModalType<ISupplier>;
   setOpen: Dispatch<SetStateAction<ModalType<ISupplier>>>;
-}> = ({ open, setOpen }) => {
+  getList: () => void;
+}> = ({ open, setOpen, getList }) => {
   const handleClose = () => {
     setOpen({
       type: "",
@@ -24,17 +25,29 @@ const SupplierModal: FC<{
       } else {
         await supplierService.updateSupplier(value);
       }
+      getList();
     } catch (error) {
       showMessage("error", "Nhà cung cấp đã tồn tại!");
     }
   };
+
+  const getTitleModal = (typeModal: string): string => {
+    switch (typeModal) {
+      case 'create': 
+        return 'Thêm mới nhà cung cấp';
+      case 'edit':
+        return `Sửa nhà cung cấp';`;
+      default: 
+      return 'Chi tiết nhà cung cấp';
+    }
+  }
   return (
     <Modal
       className="app-modal"
       open={open.type != ""}
       onCancel={handleClose}
       footer={null}
-      title="Chi tiết nhà cung cấp"
+      title={getTitleModal(open.type)}
       destroyOnClose
       width={600}
     >

@@ -149,7 +149,7 @@ const Staff: FC = () => {
         isLoading={isLoading}
         columns={columns}
       />
-      <StaffModal open={open} setOpen={setOpen} />
+      <StaffModal open={open} setOpen={setOpen} getList={getListStaff}/>
     </div>
   );
 };

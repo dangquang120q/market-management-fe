@@ -69,7 +69,7 @@ const PromotionalDetail: FC = () => {
       },
     },
     {
-      title: "Tên sản phẩm",
+      title: "Tên mặt hàng",
       dataIndex: "name",
       key: "name",
     },
@@ -169,7 +169,7 @@ const PromotionalDetail: FC = () => {
           onClick={() => handleOpenModal("create", initPromoProduct)}
           icon={<PlusOutlined />}
         >
-          Tạo sản phẩm
+          Tạo mặt hàng khuyến mãi
         </Button>
       </div>
       <CommonSearch

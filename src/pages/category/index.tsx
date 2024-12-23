@@ -123,7 +123,7 @@ const Category: FC = () => {
         isLoading={isLoading}
         columns={columns}
       />
-      <CategoryModal open={open} setOpen={setOpen} />
+      <CategoryModal open={open} setOpen={setOpen} getList={getListCategory} />
     </div>
   );
 };

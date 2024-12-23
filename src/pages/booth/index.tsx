@@ -160,7 +160,7 @@ const Booth: FC = () => {
         isLoading={isLoading}
         columns={columns}
       />
-      <BoothModal open={open} setOpen={setOpen} categories={categories} />
+      <BoothModal open={open} setOpen={setOpen} categories={categories} getList={getListBooth}/>
       <Image
         width={200}
         style={{ display: "none" }}
