@@ -38,6 +38,7 @@ const Invoice: FC = () => {
     exchangePoint: 0,
   });
   const [members, setMembers] = useState<Array<IMember>>([]);
+  const [refreshProducts, setRefreshProducts] = useState(false);
   const { id } = userStore();
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
@@ -79,6 +80,13 @@ const Invoice: FC = () => {
     console.log(res);
     setModalOpen(true);
   };
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelected([]);
+    setMember({ ...initMember, exchangePoint: 0 });
+    getListMember();
+    setRefreshProducts((prev) => !prev);
+  };
   const columns: TableProps<IProductInvoice>["columns"] = [
     {
       title: "STT",
@@ -111,12 +119,12 @@ const Invoice: FC = () => {
       key: "qty",
       render: (value, rec) => {
         return (
-            <Space>
+          <Space>
             <Button
               icon={<MinusSquareOutlined />}
               type="link"
               onClick={() => {
-              handleChangeQuantity(rec.id, -1);
+                handleChangeQuantity(rec.id, -1);
               }}
             />
             <p>{value}</p>
@@ -124,11 +132,11 @@ const Invoice: FC = () => {
               icon={<PlusSquareOutlined />}
               type="link"
               onClick={() => {
-              if (rec.saleTotal && rec.saleTotal > value)
-                handleChangeQuantity(rec.id, 1);
+                if (rec.saleTotal && rec.saleTotal > value)
+                  handleChangeQuantity(rec.id, 1);
               }}
             />
-            </Space>
+          </Space>
         );
       },
     },
@@ -194,7 +202,12 @@ const Invoice: FC = () => {
       <Row className="invoice-wrapper" gutter={30}>
         <Col span={16}>
           <Card title="Danh sách mặt hàng" bordered={false}>
-            <SearchProduct selected={selected} setSelected={setSelected} />
+            <SearchProduct
+              selected={selected}
+              setSelected={setSelected}
+              refreshProducts={refreshProducts}
+            />
+            <h2>Danh sách mặt hàng</h2>
             <Table columns={columns} dataSource={selected} />
           </Card>
         </Col>
@@ -275,7 +288,12 @@ const Invoice: FC = () => {
           </Card>
         </Col>
       </Row>
-      <InvoiceModal open={modalOpen} setOpen={setModalOpen} invoice={invoice} />
+      <InvoiceModal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        invoice={invoice}
+        onClose={handleModalClose}
+      />
     </div>
   );
 };
