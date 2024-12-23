@@ -18,7 +18,8 @@ const { Search } = Input;
 const SearchProduct: FC<{
   selected: Array<IProductInvoice>;
   setSelected: Dispatch<SetStateAction<Array<IProductInvoice>>>;
-}> = ({ selected, setSelected }) => {
+  refreshProducts: boolean;
+}> = ({ selected, setSelected,refreshProducts }) => {
   const [dataSource, setDataSource] = useState<Array<IProduct>>([]);
   const [key, setKey] = useState("");
   const [data, setData] = useState<Array<IProduct>>([]);
@@ -92,6 +93,11 @@ const SearchProduct: FC<{
   useEffect(() => {
     getListProduct();
   }, []);
+  useEffect(() => {
+    if (refreshProducts) {
+      getListProduct();
+    }
+  }, [refreshProducts]);
   return (
     <div className="search-product">
       <h2>Tìm mặt hàng</h2>

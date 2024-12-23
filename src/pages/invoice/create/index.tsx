@@ -33,6 +33,7 @@ const Invoice: FC = () => {
     exchangePoint: 0,
   });
   const [members, setMembers] = useState<Array<IMember>>([]);
+  const [refreshProducts, setRefreshProducts] = useState(false);
   const { id } = userStore();
   const [modalOpen, setModalOpen] = useState(false);
   const total = useMemo(() => {
@@ -72,6 +73,13 @@ const Invoice: FC = () => {
     const res = await invoiceService.createInvoice(invoice);
     console.log(res);
     setModalOpen(true);
+  };
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelected([]);
+    setMember({ ...initMember, exchangePoint: 0 });
+    getListMember();
+    setRefreshProducts((prev) => !prev);
   };
   const columns: TableProps<IProductInvoice>["columns"] = [
     {
@@ -158,7 +166,7 @@ const Invoice: FC = () => {
       <Row className="invoice-wrapper" gutter={30}>
         <Col span={16}>
           <div className="product-list">
-            <SearchProduct selected={selected} setSelected={setSelected} />
+            <SearchProduct selected={selected} setSelected={setSelected} refreshProducts={refreshProducts} />
             <h2>Danh sách mặt hàng</h2>
             <Table columns={columns} dataSource={selected} />
           </div>
@@ -241,7 +249,7 @@ const Invoice: FC = () => {
           </div>
         </Col>
       </Row>
-      <InvoiceModal open={modalOpen} setOpen={setModalOpen} invoice={invoice} />
+      <InvoiceModal open={modalOpen} setOpen={setModalOpen} invoice={invoice} onClose={handleModalClose} />
     </div>
   );
 };

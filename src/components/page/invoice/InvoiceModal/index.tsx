@@ -6,13 +6,19 @@ import dayjs from "dayjs";
 import NumberFormat from "components/NumberFormat";
 import Barcode from "react-barcode";
 
-const InvoiceModal: FC<{ open: boolean; setOpen: any; invoice: IInvoice }> = ({
+const InvoiceModal: FC<{ open: boolean; setOpen: any; invoice: IInvoice, onClose: any }> = ({
   open,
   setOpen,
   invoice,
+  onClose
 }) => {
   const handleClose = () => {
     setOpen(false);
+    if (onClose) {
+      onClose(); // Gọi hàm từ cha nếu có
+    } else {
+      setOpen(false); // Dự phòng nếu không truyền onClose
+    }
   };
 
   const columns: TableProps<IProductInvoice>["columns"] = [
