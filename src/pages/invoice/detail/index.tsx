@@ -136,7 +136,7 @@ const InvoiceDetail: FC = () => {
         </Skeleton>
       </Card>
       <Divider />
-      <Card title="Danh sách sản phẩm" bordered={false}>
+      <Card title="Danh sách mặt hàng" bordered={false}>
         <Table
           columns={columns}
           loading={loading}
