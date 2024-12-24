@@ -7,6 +7,7 @@ import {
   Row,
   Table,
   TableProps,
+  Card,
 } from "antd";
 import { initProduct } from "constant/initial";
 import { IProduct, IProductReceipt } from "constant/interface";
@@ -74,12 +75,9 @@ const SearchProduct: FC<{
 
   const handleSelect = (record: IProduct) => {
     setProduct(record);
+    setKey("");
   };
   const handleSubmit = (record: IProductReceipt) => {
-    // const findProduct: number = selected.findIndex(
-    //   (item: IProductReceipt) => item.id == product.id
-    // );
-    console.log(record);
     setSelected((prev) => [
       ...prev,
       {
@@ -123,32 +121,47 @@ const SearchProduct: FC<{
     getListProduct();
   }, []);
   return (
-    <div className="search-product">
-      <h2>Tìm mặt hàng</h2>
-      <Search
-        allowClear
-        placeholder="Tìm kiếm"
-        enterButton="Search"
-        onChange={(e) => {
-          onChange(e.target.value);
-        }}
-      />
-      {dataSource.length > 0 && (
-        <Table
-          ref={tableRef}
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false}
-          className="result-table"
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                handleSelect(record);
-              },
-            };
+    <Card title="Tìm mặt hàng">
+      <div style={{ position: "relative" }}>
+        <Search
+          style={{ maxWidth: "100%", marginBottom: 10 }}
+          placeholder="Tìm kiếm mặt hàng"
+          allowClear
+          size="large"
+          value={key}
+          onChange={(e) => {
+            onChange(e.target.value);
           }}
+          enterButton
         />
-      )}
+        {debounceKey && (
+          <Table
+            ref={tableRef}
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+            className="result-table"
+            scroll={{ y: 250 }}
+            locale={{ emptyText: "Không tìm thấy sản phẩm" }}
+            style={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              zIndex: 1,
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+            onRow={(record) => {
+              return {
+                onClick: () => {
+                  handleSelect(record);
+                },
+                style: { cursor: "pointer" },
+              };
+            }}
+          />
+        )}
+      </div>
       <div className="product-import">
         <Form onFinish={handleSubmit} form={form} onChange={handleChange}>
           <Row gutter={30}>
@@ -229,7 +242,7 @@ const SearchProduct: FC<{
           </Row>
         </Form>
       </div>
-    </div>
+    </Card>
   );
 };
 export default SearchProduct;

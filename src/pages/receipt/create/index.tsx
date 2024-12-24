@@ -1,5 +1,6 @@
 import {
   DeleteOutlined,
+  LeftOutlined,
   MinusSquareOutlined,
   PlusSquareOutlined,
 } from "@ant-design/icons";
@@ -12,22 +13,25 @@ import {
   Space,
   Table,
   TableProps,
+  Typography,
+  Card,
+  Tooltip,
 } from "antd";
 import NumberFormat from "components/NumberFormat";
 import ReceiptModal from "components/page/receipt/ReceiptModal";
 import SearchProduct from "components/page/receipt/SearchProduct";
+import { APP_NAME } from "constant";
 import { initSupplier } from "constant/initial";
 import { IProductReceipt, IReceipt, ISupplier } from "constant/interface";
 import { FC, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTE_URL } from "routes";
 import { receiptService } from "services/receipt";
 import { supplierService } from "services/supplier";
 import { userStore } from "store/user";
 import { genIdbyDate } from "utils";
 
-const iconStyle = {
-  cursor: "pointer",
-  fontSize: 16,
-};
+const { Text } = Typography;
 
 const Receipt: FC = () => {
   const [selected, setSelected] = useState<Array<IProductReceipt>>([]);
@@ -39,6 +43,7 @@ const Receipt: FC = () => {
   });
   const [suppliers, setSuppliers] = useState<Array<ISupplier>>([]);
   const { id } = userStore();
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const total = useMemo(() => {
     return selected.reduce(
@@ -93,6 +98,13 @@ const Receipt: FC = () => {
       title: "Giá",
       dataIndex: "importPrice",
       key: "importPrice",
+      render: (val, rec) => {
+        return (
+          <Space>
+            <NumberFormat value={val || rec.price} /> đ
+          </Space>
+        );
+      },
     },
     {
       title: "Số lượng",
@@ -101,17 +113,20 @@ const Receipt: FC = () => {
       render: (value, rec) => {
         return (
           <Space>
-            <MinusSquareOutlined
-              style={iconStyle}
+            <Button
+              icon={<MinusSquareOutlined />}
+              type="link"
               onClick={() => {
                 handleChangeQuantity(rec.id, -1);
               }}
             />
             <p>{value}</p>
-            <PlusSquareOutlined
-              style={iconStyle}
+            <Button
+              icon={<PlusSquareOutlined />}
+              type="link"
               onClick={() => {
-                handleChangeQuantity(rec.id, 1);
+                if (rec.saleTotal && rec.saleTotal > value)
+                  handleChangeQuantity(rec.id, 1);
               }}
             />
           </Space>
@@ -133,7 +148,13 @@ const Receipt: FC = () => {
       dataIndex: "total",
       key: "total",
       width: "100px",
-      render: (_val, rec) => rec.importPrice * rec.qty,
+      render: (_val, rec) => {
+        return (
+          <Space>
+            <NumberFormat value={rec.importPrice * rec.qty} /> đ
+          </Space>
+        );
+      },
     },
     {
       title: "",
@@ -142,17 +163,17 @@ const Receipt: FC = () => {
       render: (val) => {
         return (
           <Space>
-            <Button
-              type="link"
-              danger
-              size="small"
-              onClick={() => {
-                handleDelete(val);
-              }}
-              style={{ padding: 0 }}
-            >
-              <DeleteOutlined />
-            </Button>
+            <Tooltip placement="top" title="Xóa">
+              <Button
+                icon={<DeleteOutlined />}
+                type="link"
+                size="small"
+                danger
+                onClick={() => {
+                  handleDelete(val);
+                }}
+              />
+            </Tooltip>
           </Space>
         );
       },
@@ -163,73 +184,82 @@ const Receipt: FC = () => {
     setSuppliers(res);
   };
   useEffect(() => {
+    document.title = `Hóa đơn nhập hàng - ${APP_NAME}`;
     getListSuppliers();
   }, []);
   console.log(selected);
 
   return (
     <div className="invoice-create">
-      <h1>Hóa đơn nhập hàng</h1>
+      <Space>
+        <Tooltip placement="top" title="Quay về">
+          <Button
+            type="link"
+            size="large"
+            icon={<LeftOutlined />}
+            onClick={() => {
+              navigate(ROUTE_URL.RECEIPT);
+            }}
+          />
+        </Tooltip>
+        <h1>Hóa đơn nhập hàng</h1>
+      </Space>
       <Divider />
-      <Row className="invoice-wrapper" gutter={30}>
-        <Col span={9} className="total">
-          <div className="total-wrapper">
-            <div>
-              <h2>Nhà cung cấp</h2>
-              <Select
-                showSearch
-                style={{ width: "100%" }}
-                placeholder="Search to Select"
-                optionFilterProp="children"
-                onSelect={(e) => {
-                  const temp = suppliers.find(
-                    (item: ISupplier) => item.id == e
-                  );
-                  if (temp) setSupplier({ ...temp, exchangePoint: 0 });
-                }}
-                allowClear
-                onClear={() => {
-                  setSupplier({ ...initSupplier, exchangePoint: 0 });
-                }}
-                filterOption={(input, option) =>
-                  (option?.label ?? "").includes(input)
-                }
-                filterSort={(optionA, optionB) =>
-                  (optionA?.label ?? "")
-                    .toLowerCase()
-                    .localeCompare((optionB?.label ?? "").toLowerCase())
-                }
-                options={suppliers.map((item: ISupplier) => ({
-                  label: item.name,
-                  value: item.id,
-                }))}
-              />
-            </div>
+
+      <Row gutter={30}>
+        <Col span={9}>
+          <Card title="Thêm mặt hàng">
+            <h2>Nhà cung cấp</h2>
+            <Select
+              showSearch
+              style={{ width: "100%", marginBottom: 20 }}
+              placeholder="Chọn nhà cung cấp"
+              optionFilterProp="children"
+              onSelect={(e) => {
+                const temp = suppliers.find((item: ISupplier) => item.id == e);
+                if (temp) setSupplier({ ...temp, exchangePoint: 0 });
+              }}
+              allowClear
+              onClear={() => {
+                setSupplier({ ...initSupplier, exchangePoint: 0 });
+              }}
+              filterOption={(input, option) =>
+                (option?.label ?? "").includes(input)
+              }
+              filterSort={(optionA, optionB) =>
+                (optionA?.label ?? "")
+                  .toLowerCase()
+                  .localeCompare((optionB?.label ?? "").toLowerCase())
+              }
+              options={suppliers.map((item: ISupplier) => ({
+                label: item.name,
+                value: item.id,
+              }))}
+            />
             <SearchProduct selected={selected} setSelected={setSelected} />
-          </div>
+          </Card>
         </Col>
         <Col span={15}>
-          <div className="product-list">
-            <h2>Danh sách mặt hàng</h2>
+          <Card title="Danh sách mặt hàng">
             <Table columns={columns} dataSource={selected} />
-          </div>
-          <Divider />
-          <div>
-            <b>Tổng giá trị:</b>
-            <p style={{ textAlign: "center" }} className="total-price">
-              <b>
-                <NumberFormat value={total} />
-              </b>{" "}
-              <b style={{ fontSize: 18 }}>đồng</b>
-            </p>
-          </div>
-          <Button
-            type="primary"
-            onClick={handleSaveReceipt}
-            disabled={selected.length < 1}
-          >
-            Lưu hóa đơn
-          </Button>
+            <Divider />
+            <div style={{ textAlign: "center" }}>
+              <Text strong>Tổng giá trị:</Text>
+              <p style={{ textAlign: "center" }} className="total-price">
+                <b>
+                  <NumberFormat value={total} />
+                </b>{" "}
+                <b style={{ fontSize: 18 }}>đồng</b>
+              </p>
+            </div>
+            <Button
+              type="primary"
+              onClick={handleSaveReceipt}
+              disabled={selected.length < 1}
+            >
+              Lưu hóa đơn
+            </Button>
+          </Card>
         </Col>
       </Row>
       <ReceiptModal open={modalOpen} setOpen={setModalOpen} receipt={receipt} />
