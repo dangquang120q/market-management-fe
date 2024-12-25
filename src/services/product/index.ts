@@ -25,6 +25,10 @@ class ProductService {
   }) => {
     return axiosJwt.post(API_URL + "/releaseProduct", params);
   };
+  getListRecommendProduct = async (params: { memberId: number | string }) => {
+    const res = await axiosJwt.post(API_URL + "/getListRecommendProduct", params);
+    return res.data.data;
+  };
 }
 
 export const productService = new ProductService();

@@ -3,6 +3,7 @@ import {
   LeftOutlined,
   MinusSquareOutlined,
   PlusSquareOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -22,16 +23,25 @@ import InvoiceModal from "components/page/invoice/InvoiceModal";
 import SearchProduct from "components/page/invoice/SearchProduct";
 import { APP_NAME } from "constant";
 import { initMember } from "constant/initial";
-import { IInvoice, IMember, IProductInvoice } from "constant/interface";
+import {
+  IInvoice,
+  IMember,
+  IProduct,
+  IProductInvoice,
+} from "constant/interface";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTE_URL } from "routes";
 import { invoiceService } from "services/invoice";
 import { memberService } from "services/member";
+import { productService } from "services/product";
 import { userStore } from "store/user";
 import { genIdbyDate } from "utils";
 
 const Invoice: FC = () => {
+  const [recommendProductLoading, setRecommendProductLoading] =
+    useState<boolean>(false);
+  const [recommendProduct, setRecommendProduct] = useState<Array<IProduct>>([]);
   const [selected, setSelected] = useState<Array<IProductInvoice>>([]);
   const [member, setMember] = useState<IMember & { exchangePoint: number }>({
     ...initMember,
@@ -175,14 +185,216 @@ const Invoice: FC = () => {
       },
     },
   ];
+  const recommendProductColumns: TableProps<IProduct>["columns"] = [
+    {
+      title: "STT",
+      dataIndex: "id",
+      key: "id",
+      render(_value, _record, index) {
+        return index + 1;
+      },
+    },
+    {
+      title: "Tên mặt hàng",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (_val, rec) => {
+        return (
+          <>
+            <NumberFormat value={rec.price} /> đ
+          </>
+        );
+      },
+    },
+    {
+      title: "",
+      dataIndex: "id",
+      key: "id",
+      render: (_val, rec) => {
+        return (
+          <Space>
+            <Tooltip placement="top" title="Thêm vào giỏ">
+              <Button
+                icon={<ShoppingCartOutlined />}
+                type="link"
+                size="large"
+                onClick={() => {
+                  const existingProduct = selected.find(
+                    (item) => item.id === rec.id
+                  );
+                  if (existingProduct) {
+                    handleChangeQuantity(rec.id, 1);
+                  } else {
+                    setSelected((prev) => [
+                      ...prev,
+                      { ...rec, qty: 1 },
+                    ]);
+                  }
+                }}
+              />
+            </Tooltip>
+          </Space>
+        );
+      },
+    },
+  ]
   const getListMember = async () => {
     const res = await memberService.getListMember();
     setMembers(res);
+  };
+  const fetchRecommendProduct = async () => {
+    setRecommendProductLoading(true);
+    try {
+      // const res = await productService.getListRecommendProduct({
+      //   memberId: member.id,
+      // });
+
+      const fakeData = {
+        error: false,
+        responseTimestamp: "2024-12-24T03:30:11.710Z",
+        statusCode: 200,
+        data: [
+          {
+            id: 128,
+            name: "Máy nướng bánh mì",
+            unit: "cái",
+            total: 0,
+            price: 350000,
+            categoryId: 10,
+            saleTotal: 0,
+          },
+          {
+            id: 65,
+            name: "Bộ bát đĩa",
+            unit: "set",
+            total: 0,
+            price: 150000,
+            categoryId: 4,
+            saleTotal: 0,
+          },
+          {
+            id: 100,
+            name: "Nước tẩy trang Garnier",
+            unit: "chai",
+            total: 0,
+            price: 150000,
+            categoryId: 7,
+            saleTotal: 0,
+          },
+          {
+            id: 105,
+            name: "Túi nilon Hàn Quốc",
+            unit: "gói",
+            total: 0,
+            price: 25000,
+            categoryId: 8,
+            saleTotal: 0,
+          },
+          {
+            id: 108,
+            name: "Bông tẩy trang",
+            unit: "gói",
+            total: 0,
+            price: 50000,
+            categoryId: 8,
+            saleTotal: 0,
+          },
+          {
+            id: 47,
+            name: "Bánh quy cà phê",
+            unit: "hộp",
+            total: 0,
+            price: 35000,
+            categoryId: 2,
+            saleTotal: 0,
+          },
+          {
+            id: 16,
+            name: "Dầu ăn Neptune",
+            unit: "lít",
+            total: 0,
+            price: 45000,
+            categoryId: 12,
+            saleTotal: 0,
+          },
+          {
+            id: 113,
+            name: "Thức ăn cho chó Pedigree",
+            unit: "gói",
+            total: 0,
+            price: 150000,
+            categoryId: 9,
+            saleTotal: 0,
+          },
+          {
+            id: 15,
+            name: "Bánh quy Oreo",
+            unit: "gói",
+            total: 0,
+            price: 30000,
+            categoryId: 2,
+            saleTotal: 0,
+          },
+          {
+            id: 20,
+            name: "Nước ngọt Fanta",
+            unit: "chai",
+            total: 0,
+            price: 12000,
+            categoryId: 1,
+            saleTotal: 0,
+          },
+          {
+            id: 52,
+            name: "Bánh crepe",
+            unit: "chiếc",
+            total: 0,
+            price: 30000,
+            categoryId: 2,
+            saleTotal: 0,
+          },
+          {
+            id: 148,
+            name: "Muối tinh",
+            unit: "kg",
+            total: 70,
+            price: 5000,
+            categoryId: 12,
+            saleTotal: 70,
+          },
+          {
+            id: 25,
+            name: "Nước trái cây ép táo",
+            unit: "hộp",
+            total: 0,
+            price: 20000,
+            categoryId: 1,
+            saleTotal: 0,
+          },
+        ],
+      };
+      setRecommendProduct(fakeData.data);
+      setRecommendProductLoading(false);
+    } catch (error) {
+      console.log(error);
+      setRecommendProductLoading(false);
+    }
   };
   useEffect(() => {
     document.title = `Tạo hóa đơn bán hàng - ${APP_NAME}`;
     getListMember();
   }, []);
+
+  useEffect(() => {
+    if (member.id && +member.id > 0) {
+      fetchRecommendProduct();
+    }
+  }, [member]);
   return (
     <div className="invoice-create">
       <Space>
@@ -286,6 +498,24 @@ const Invoice: FC = () => {
               Lưu hóa đơn
             </Button>
           </Card>
+          {member.id && +member.id > 0 && (
+            <Card
+              title="Gợi ý cho bạn"
+              bordered={false}
+              style={{ marginTop: 15 }}
+            >
+              <Table
+                columns={recommendProductColumns}
+                dataSource={recommendProduct.map((product) => ({
+                  ...product,
+                  key: product.id,
+                }))}
+                loading={recommendProductLoading}
+                pagination={false}
+                scroll={{ y: 240 }}
+              ></Table>
+            </Card>
+          )}
         </Col>
       </Row>
       <InvoiceModal
