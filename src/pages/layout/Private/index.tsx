@@ -35,7 +35,7 @@ const PriveLayout: FC = () => {
 
   const {
     token: {
-      colorBgContainer,
+      // colorBgContainer,
       borderRadiusLG,
       colorBgElevated,
       boxShadowSecondary,
