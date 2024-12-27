@@ -130,7 +130,7 @@ const Inventory: FC = () => {
   ];
   return (
     <div className="best-seller">
-      <h2>Hàng tồn kho</h2>
+      <h2 style={{ marginBottom: '15px'}}>Hàng tồn kho</h2>
       <Table
         columns={columns}
         dataSource={data}

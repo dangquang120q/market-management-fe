@@ -1,4 +1,4 @@
-import { DatePicker, Divider, Select } from "antd";
+import { DatePicker, Divider, Select, Row, Col, Card } from "antd";
 import {
   BarElement,
   CategoryScale,
@@ -6,7 +6,7 @@ import {
   Chart as ChartJS,
   Legend,
   LinearScale,
-  Title,
+  Title as ChartTitle,
   Tooltip,
 } from "chart.js";
 import dayjs from "dayjs";
@@ -18,7 +18,7 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  Title,
+  ChartTitle,
   Tooltip,
   Legend
 );
@@ -107,29 +107,41 @@ const RevenueStatistic: FC = () => {
   };
   return (
     <div className="statistic">
-      <h1>Thống kê doanh thu</h1>
+      <Row justify="center">
+        <Col>
+          <h1>Thống kê doanh thu</h1>
+        </Col>
+      </Row>
       <Divider />
-      <div className="select-input">
-        <Select
-          placeholder="Select a option"
-          defaultValue={1}
-          onChange={(e) => {
-            setType(e);
-          }}
-        >
-          {REVENUE_TYPE.map((item) => (
-            <Option value={item.key} key={item.key}>
-              {item.label}
-            </Option>
-          ))}
-        </Select>
+      <Row justify="center" gutter={[16, 16]}>
+        <Col>
+          <Select
+            placeholder="Select a option"
+            defaultValue={1}
+            onChange={(e) => {
+              setType(e);
+            }}
+          >
+            {REVENUE_TYPE.map((item) => (
+              <Option value={item.key} key={item.key}>
+                {item.label}
+              </Option>
+            ))}
+          </Select>
+        </Col>
         {type == 2 && (
-          <RangePicker onChange={handleChange} style={{ marginLeft: 20 }} />
+          <Col>
+            <RangePicker onChange={handleChange} />
+          </Col>
         )}
-      </div>
-      <div className="chart" style={{ width: "80%", margin: "30px auto" }}>
-        <Bar options={options} data={data} />
-      </div>
+      </Row>
+      <Row justify="center" style={{ marginTop: 30 }}>
+        <Col span={20}>
+          <Card>
+            <Bar options={options} data={data} />
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

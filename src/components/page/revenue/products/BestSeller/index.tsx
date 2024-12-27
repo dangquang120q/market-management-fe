@@ -111,9 +111,10 @@ const BestSeller: FC = () => {
   }, []);
   return (
     <div className="best-seller">
-      <div className="chart" style={{ width: "80%", margin: "auto" }}>
+      <div className="chart" style={{ width: "100%", margin: "auto", paddingBottom: "20px" }}>
         <Bar options={options} data={data} />
       </div>
+      <h2 style={{ marginBottom: '15px'}}>Danh sách sản phẩm bán chạy</h2>
       <Table columns={columns} dataSource={dataTable} />
     </div>
   );

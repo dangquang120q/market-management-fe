@@ -1,4 +1,4 @@
-import { Tabs } from "antd";
+import { Tabs, Row, Col, Divider, Card } from "antd";
 import BestSeller from "components/page/revenue/products/BestSeller";
 import CanceledShipment from "components/page/revenue/products/Cancel";
 import Inventory from "components/page/revenue/products/Inventory";
@@ -51,15 +51,27 @@ const ProductsStatistic: FC = () => {
 
   return (
     <div className="statistic">
-      <Tabs
-        activeKey={activeTab}
-        onChange={onChangeTab}
-        className="blue-button-tabs"
-      >
-        {tabList.map((el: any) => (
-          <TabPane tab={el.label} key={el.key} children={el.children} />
-        ))}
-      </Tabs>
+      <Row justify="center">
+        <Col>
+          <h1>Thống kê sản phẩm</h1>
+        </Col>
+      </Row>
+      <Divider />
+      <Row justify="center">
+        <Col span={20}>
+          <Card style={{ flex: 1, width: "100%" }}>
+            <Tabs
+              activeKey={activeTab}
+              onChange={onChangeTab}
+              className="blue-button-tabs"
+            >
+              {tabList.map((el: any) => (
+                <TabPane tab={el.label} key={el.key} children={el.children} />
+              ))}
+            </Tabs>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

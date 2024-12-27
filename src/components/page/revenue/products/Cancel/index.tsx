@@ -88,7 +88,7 @@ const CanceledShipment: FC = () => {
   ];
   return (
     <div className="best-seller">
-      <h2>Hàng đã hủy </h2>
+      <h2 style={{ marginBottom: '15px'}}>Hàng đã hủy</h2>
       <Table
         columns={columns}
         dataSource={data}
