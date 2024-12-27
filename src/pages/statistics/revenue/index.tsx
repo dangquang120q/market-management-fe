@@ -9,6 +9,7 @@ import {
   Title as ChartTitle,
   Tooltip,
 } from "chart.js";
+import { APP_NAME } from "constant";
 import dayjs from "dayjs";
 import { useEffect, useState, type FC } from "react";
 import { Bar } from "react-chartjs-2";
@@ -97,6 +98,7 @@ const RevenueStatistic: FC = () => {
     console.log(res);
   };
   useEffect(() => {
+    document.title = `Thống kê doanh thu - ${APP_NAME}`;
     if (type == 1) fetchDataMonth();
   }, [type]);
 

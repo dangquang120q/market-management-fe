@@ -1,6 +1,7 @@
 import { Button, Popconfirm, Table, TableProps } from "antd";
 import showMessage from "components/Message";
 import NumberFormat from "components/NumberFormat";
+import { APP_NAME } from "constant";
 import { IProductReceipt } from "constant/interface";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
@@ -26,6 +27,7 @@ const Inventory: FC = () => {
     setData(data);
   };
   useEffect(() => {
+    document.title = `Thống kê sản phẩm - Hàng tồn kho - ${APP_NAME}`;
     fetchData();
   }, []);
   // const rowSelection = {

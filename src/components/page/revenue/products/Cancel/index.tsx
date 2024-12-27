@@ -1,5 +1,6 @@
 import { Table, TableProps } from "antd";
 import NumberFormat from "components/NumberFormat";
+import { APP_NAME } from "constant";
 import { IProductReceipt } from "constant/interface";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
@@ -21,6 +22,7 @@ const CanceledShipment: FC = () => {
     setData(data);
   };
   useEffect(() => {
+    document.title = `Thống kê sản phẩm - Hàng đã hủy - ${APP_NAME}`;
     fetchData();
   }, []);
   // const rowSelection = {

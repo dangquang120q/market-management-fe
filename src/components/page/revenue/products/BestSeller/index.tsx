@@ -14,6 +14,7 @@ import { Bar } from "react-chartjs-2";
 import { IProduct } from "constant/interface";
 import { Table, TableProps } from "antd";
 import NumberFormat from "components/NumberFormat";
+import { APP_NAME } from "constant";
 
 ChartJS.register(
   CategoryScale,
@@ -107,6 +108,7 @@ const BestSeller: FC = () => {
     });
   };
   useEffect(() => {
+    document.title = `Thống kê sản phẩm - Sản phẩm bán chạy - ${APP_NAME}`;
     fetchData();
   }, []);
   return (
