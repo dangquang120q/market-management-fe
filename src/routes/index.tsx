@@ -10,8 +10,10 @@ import {
   IdcardOutlined,
   InboxOutlined,
   ProfileOutlined,
+  RiseOutlined,
   ShopOutlined,
   ShoppingCartOutlined,
+  StockOutlined,
   TruckOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -32,6 +34,8 @@ import ReceiptDetail from "pages/receipt/detail";
 import ProductShipment from "pages/shipment";
 import Promotional from "pages/promotional";
 import PromotionalDetail from "pages/promotional/detail";
+import ForecastDemandStatistic from "pages/statistics/forecast-demand";
+import ForecastRevenueStatistic from "pages/statistics/forecast-revenue";
 
 export const ROUTE_URL = {
   HOME: "/",
@@ -50,6 +54,8 @@ export const ROUTE_URL = {
   RECEIPT: "/receipt",
   REVENUE_STATISTIC: "/statistic/revenue",
   PRODUCT_STATISTIC: "/statistic/product",
+  FORECAST_DEMAND_STATISTIC: "/statistic/forecast-demand",
+  FORECAST_REVENUE_STATISTIC: "/statistic/forecast-revenue",
   INVOICE_DETAIL: "/invoice/detail/:id",
   RECEIPT_DETAIL: "/receipt/detail/:id",
   PROMOTIONAL_DETAIL: "/promotional/detail/:id",
@@ -81,6 +87,14 @@ const routes = [
       {
         path: ROUTE_URL.PRODUCT_STATISTIC,
         element: <ProductsStatistic />,
+      },
+      {
+        path: ROUTE_URL.FORECAST_DEMAND_STATISTIC,
+        element: <ForecastDemandStatistic />,
+      },
+      {
+        path: ROUTE_URL.FORECAST_REVENUE_STATISTIC,
+        element: <ForecastRevenueStatistic />,
       },
       {
         path: ROUTE_URL.MEMBER,
@@ -243,6 +257,16 @@ export const sidebarItems = [
         key: ROUTE_URL.PRODUCT_STATISTIC,
         icon: <ShopOutlined />,
         label: "Thống kê sản phẩm",
+      },
+      {
+        key: ROUTE_URL.FORECAST_DEMAND_STATISTIC,
+        icon: <RiseOutlined />,
+        label: "Dự báo mặt hàng",
+      },
+      {
+        key: ROUTE_URL.FORECAST_REVENUE_STATISTIC,
+        icon: <StockOutlined />,
+        label: "Dự báo doanh thu",
       },
     ],
   },

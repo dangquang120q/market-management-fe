@@ -24,6 +24,12 @@ class StatiticsService {
   getListCancel() {
     return axiosJwt.post(API_URL + "/getListCancel");
   }
+  forecastProductDemand() {
+    return axiosJwt.post(API_URL + "/forecastProductDemand");
+  }
+  forecastProductRevenue() {
+    return axiosJwt.post(API_URL + "/forecastProductRevenue");
+  }
 }
 
 export const statiticsService = new StatiticsService();
