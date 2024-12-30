@@ -27,7 +27,7 @@ class ProductService {
   };
   getListRecommendProduct = async (params: { memberId: number | string }) => {
     const res = await axiosJwt.post(API_URL + "/getListRecommendProduct", params);
-    return res.data.data;
+    return res;
   };
 }
 

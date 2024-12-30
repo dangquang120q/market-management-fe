@@ -1,4 +1,4 @@
-import { Divider, Row, Col, Card } from "antd";
+import { Divider, Row, Col, Card, Spin } from "antd";
 import {
   LineElement,
   PointElement,
@@ -16,6 +16,7 @@ import { useEffect, useState, type FC } from "react";
 import { Line } from "react-chartjs-2";
 // import { statiticsService } from "services/statistic"; // Uncomment this line when API is available
 import dayjs from "dayjs";
+import { statiticsService } from "services/statistic";
 
 ChartJS.register(
   CategoryScale,
@@ -46,33 +47,35 @@ const ForecastRevenueStatistic: FC = () => {
     labels: [],
     datasets: [],
   });
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchForecastProductRevenue = async () => {
-    // const res = await statiticsService.forecastProductRevenue(); // Uncomment this line when API is available
-    const res =
-    {
-        "error": false,
-        "responseTimestamp": "2024-12-24T05:40:55.394Z",
-        "statusCode": 200,
-        "data": {
-            "revenueForecastByMonth": [
-                {
-                    "month": "2025-01",
-                    "totalRevenue": 133669797.68673763
-                },
-                {
-                    "month": "2025-02",
-                    "totalRevenue": 101789064.51950459
-                },
-                {
-                    "month": "2025-03",
-                    "totalRevenue": 53027571.30623853
-                }
-            ]
-        }
-    }
-    // const rawData = res.data.data.revenueForecastByMonth; // Uncomment this line when API is available
-    const rawData = res.data.revenueForecastByMonth; // Comment this line when API is available
+    setLoading(true);
+    const res = await statiticsService.forecastProductRevenue(); // Uncomment this line when API is available
+    // const res =
+    // {
+    //     "error": false,
+    //     "responseTimestamp": "2024-12-24T05:40:55.394Z",
+    //     "statusCode": 200,
+    //     "data": {
+    //         "revenueForecastByMonth": [
+    //             {
+    //                 "month": "2025-01",
+    //                 "totalRevenue": 133669797.68673763
+    //             },
+    //             {
+    //                 "month": "2025-02",
+    //                 "totalRevenue": 101789064.51950459
+    //             },
+    //             {
+    //                 "month": "2025-03",
+    //                 "totalRevenue": 53027571.30623853
+    //             }
+    //         ]
+    //     }
+    // }
+    const rawData = res.data.data.revenueForecastByMonth; // Uncomment this line when API is available
+    // const rawData = res.data.revenueForecastByMonth; // Comment this line when API is available
     const labels = rawData.map((item: { month: string }) =>
       dayjs(item.month, "YYYY-MM").format("MM/YYYY")
     );
@@ -89,6 +92,7 @@ const ForecastRevenueStatistic: FC = () => {
       labels,
       datasets,
     });
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -107,7 +111,9 @@ const ForecastRevenueStatistic: FC = () => {
       <Row justify="center" style={{ marginTop: 30 }}>
         <Col span={20}>
           <Card>
-            <Line options={options} data={data} />
+            <Spin spinning={loading}>
+              <Line options={options} data={data} />
+            </Spin>
           </Card>
         </Col>
       </Row>

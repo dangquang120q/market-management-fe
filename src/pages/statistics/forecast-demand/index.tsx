@@ -3,6 +3,7 @@ import { APP_NAME } from "constant";
 import { useEffect, useState, type FC } from "react";
 // import { statiticsService } from "services/statistic"; // Uncomment this line when API is available
 import { IProduct } from "constant/interface";
+import { statiticsService } from "services/statistic";
 
 const columns = [
   {
@@ -21,6 +22,11 @@ const columns = [
     dataIndex: 'unit',
     key: 'unit',
   },
+  {
+    title: 'Số lượng còn lại',
+    dataIndex: 'total',
+    key: 'total',
+  },
 ];
 
 const ForecastDemandStatistic: FC = () => {
@@ -30,114 +36,13 @@ const ForecastDemandStatistic: FC = () => {
 
   const fetchForecastProductDemand = async () => {
     setLoading(true);
-    // const res = await statiticsService.forecastProductDemand(); // Uncomment this line when API is available
-    const res = {
-      "error": false,
-      "responseTimestamp": "2024-12-24T05:28:13.662Z",
-      "statusCode": 200,
-      "data": {
-        "HangBanChay": [
-          {
-            "id": 2,
-            "name": "Bánh quy socola hạt lúa mạch 300g",
-            "unit": "gói",
-            "total": 0,
-            "price": 21500,
-            "categoryId": 2,
-            "saleTotal": 0
-          },
-          {
-            "id": 7,
-            "name": "Nước cam ép Vfresh Vinamilk hộp 1L",
-            "unit": "hộp",
-            "total": 0,
-            "price": 49000,
-            "categoryId": 1,
-            "saleTotal": 0
-          },
-          {
-            "id": 10,
-            "name": "Khăn giấy Kleenex",
-            "unit": "gói",
-            "total": 0,
-            "price": 25000,
-            "categoryId": 8,
-            "saleTotal": 0
-          },
-          {
-            "id": 11,
-            "name": "Bánh mì sandwich",
-            "unit": "ổ",
-            "total": 0,
-            "price": 17000,
-            "categoryId": 2,
-            "saleTotal": 0
-          },
-          {
-            "id": 13,
-            "name": "Sữa tươi Vinamilk",
-            "unit": "hộp",
-            "total": 0,
-            "price": 6000,
-            "categoryId": 1,
-            "saleTotal": 0
-          }
-        ],
-        "HangBanKem": [
-          {
-            "id": 2,
-            "name": "Bánh quy socola hạt lúa mạch 300g",
-            "unit": "gói",
-            "total": 0,
-            "price": 21500,
-            "categoryId": 2,
-            "saleTotal": 0
-          },
-          {
-            "id": 7,
-            "name": "Nước cam ép Vfresh Vinamilk hộp 1L",
-            "unit": "hộp",
-            "total": 0,
-            "price": 49000,
-            "categoryId": 1,
-            "saleTotal": 0
-          },
-          {
-            "id": 10,
-            "name": "Khăn giấy Kleenex",
-            "unit": "gói",
-            "total": 0,
-            "price": 25000,
-            "categoryId": 8,
-            "saleTotal": 0
-          },
-          {
-            "id": 11,
-            "name": "Bánh mì sandwich",
-            "unit": "ổ",
-            "total": 0,
-            "price": 17000,
-            "categoryId": 2,
-            "saleTotal": 0
-          },
-          {
-            "id": 13,
-            "name": "Sữa tươi Vinamilk",
-            "unit": "hộp",
-            "total": 0,
-            "price": 6000,
-            "categoryId": 1,
-            "saleTotal": 0
-          }
-        ]
-      }
-    }; // Comment this line when API is available
+    const res = await statiticsService.forecastProductDemand(); // Uncomment this line when API is available
 
-    setBestSellingProducts(res.data.HangBanChay); // Comment this line when API is available
-    setWorstSellingProducts(res.data.HangBanKem); // Comment this line when API is available
+    // setBestSellingProducts(res.data.HangBanChay); // Comment this line when API is available
+    // setWorstSellingProducts(res.data.HangBanKem); // Comment this line when API is available
 
-    // setBestSellingProducts(res.data.data.HangBanChay); // Uncomment this line when API is available
-    // setWorstSellingProducts(res.data.data.HangBanKem); // Uncomment this line when API is available
+    setBestSellingProducts(res.data.data.HangBanChay); // Uncomment this line when API is available
+    setWorstSellingProducts(res.data.data.HangBanKem); // Uncomment this line when API is available
     setLoading(false);
   };
 

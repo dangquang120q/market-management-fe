@@ -22,7 +22,7 @@ import NumberFormat from "components/NumberFormat";
 import InvoiceModal from "components/page/invoice/InvoiceModal";
 import SearchProduct from "components/page/invoice/SearchProduct";
 import { APP_NAME } from "constant";
-import { recommendProductFake } from "constant/fakeData";
+// import { recommendProductFake } from "constant/fakeData";
 import { initMember } from "constant/initial";
 import {
   IInvoice,
@@ -35,6 +35,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTE_URL } from "routes";
 import { invoiceService } from "services/invoice";
 import { memberService } from "services/member";
+import { productService } from "services/product";
 // import { productService } from "services/product";
 import { userStore } from "store/user";
 import { genIdbyDate } from "utils";
@@ -213,32 +214,39 @@ const Invoice: FC = () => {
       },
     },
     {
+      title: "Còn lại",
+      dataIndex: "saleTotal",
+      key: "saleTotal",
+    },
+    {
       title: "",
       dataIndex: "id",
       key: "id",
       render: (_val, rec) => {
         return (
           <Space>
-            <Tooltip placement="top" title="Thêm vào giỏ">
-              <Button
-                icon={<ShoppingCartOutlined />}
-                type="link"
-                size="large"
-                onClick={() => {
-                  const existingProduct = selected.find(
-                    (item) => item.id === rec.id
-                  );
-                  if (existingProduct) {
-                    handleChangeQuantity(rec.id, 1);
-                  } else {
-                    setSelected((prev) => [
-                      ...prev,
-                      { ...rec, qty: 1 },
-                    ]);
-                  }
-                }}
-              />
-            </Tooltip>
+            {rec.saleTotal !== 0 && (
+              <Tooltip placement="top" title="Thêm vào giỏ">
+                <Button
+                  icon={<ShoppingCartOutlined />}
+                  type="link"
+                  size="large"
+                  onClick={() => {
+                    const existingProduct = selected.find(
+                      (item) => item.id === rec.id
+                    );
+                    if (existingProduct) {
+                      handleChangeQuantity(rec.id, 1);
+                    } else {
+                      setSelected((prev) => [
+                        ...prev,
+                        { ...rec, qty: 1 },
+                      ]);
+                    }
+                  }}
+                />
+              </Tooltip>
+            )}
           </Space>
         );
       },
@@ -251,10 +259,11 @@ const Invoice: FC = () => {
   const fetchRecommendProduct = async () => {
     setRecommendProductLoading(true);
     try {
-      // const res = await productService.getListRecommendProduct({
-      //   memberId: member.id,
-      // });
-      setRecommendProduct(recommendProductFake.data);
+      const res = await productService.getListRecommendProduct({
+        memberId: member.id,
+      });
+      console.log(res.data);
+      setRecommendProduct(res.data.data);
       setRecommendProductLoading(false);
     } catch (error) {
       console.log(error);
@@ -333,7 +342,7 @@ const Invoice: FC = () => {
             <Space style={{ display: member.id ? "block" : "none" }}>
               <p>Điểm tích lũy: {member.point}</p>
             </Space>
-            <Space style={{ padding: "10px 0" }}>
+            <Space style={{ padding: "10px 10px" }}>
               <p>Đổi điểm</p>
               <InputNumber
                 max={member.point}
@@ -376,7 +385,7 @@ const Invoice: FC = () => {
           </Card>
           {member.id && +member.id > 0 && (
             <Card
-              title="Gợi ý cho bạn"
+              title="Gợi ý cho khách hàng"
               bordered={false}
               style={{ marginTop: 15 }}
             >
